@@ -39,7 +39,7 @@
 
 @font-face {
     font-family: Comfortaa-VariableFont_wght;
-    src: url('../Comfortaa/Comfortaa-VariableFont_wght.ttf') format('truetype');
+    src: url('./Comfortaa/Comfortaa-VariableFont_wght.ttf') format('truetype');
 }
 
 
