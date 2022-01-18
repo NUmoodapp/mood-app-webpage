@@ -45,7 +45,7 @@ function App(props) {
                 <h3>Mood got... </h3>
                 <p>"{statement}"</p>
                 <p>Finding the perfect song to match your mood...</p>
-                <LoadingIcons.BallTriangle />
+                <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1}/></p>
                 {// loading icons not working yet
                 }
             </main>}
