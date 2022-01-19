@@ -259,12 +259,14 @@ body {
     .recbox {
         display: none;
     }
-
+    /*
     main {
         box-sizing: border-box;
         left: auto;
         width: 100%;
     }
+    This only gives half the image
+    */
 }
 
 
