@@ -38,7 +38,7 @@ function App(props) {
     return (
         <div>
             <nav>
-                <a onClick={goHome} href='' className="app"><img src={require('./moodapplogo.png')} alt="Mood app logo"/></a>
+                <a onClick={goHome} href='' className="logo"><img src={require('./moodapplogo.png')} alt="Mood app logo"/></a>
                 <a onClick={goToAbout} href=''>About Mood</a>
             </nav>
 
