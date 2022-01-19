@@ -6,6 +6,7 @@ import LoadingIcons from 'react-loading-icons'
 function App(props) {
     const [statement, setStatement] = useState('');
     const [toggleHome, setToggleHome] = useState(true);
+    const [toggleVoice, setToggleVoice] = useState(false); 
     const [song, setSong] = useState(null);
 
     function addStatement(newStatement) {
@@ -14,12 +15,24 @@ function App(props) {
 
     function goToAbout(e) {
         setToggleHome(false);
+        setToggleVoice(false);
         e.preventDefault();
     }
 
     function goHome(e) {
         setToggleHome(true);
+        setToggleVoice(false);
+        statement = '';
         e.preventDefault();
+    }
+
+    function goVoice(e) {
+        setToggleVoice(true);
+        setToggleHome(false);
+        e.preventDefault();
+        
+        {// Voice state option
+        }
     }
 
     return (
@@ -34,11 +47,23 @@ function App(props) {
                 <h1 style={{margin:"0", fontSize:"75pt"}}><img src={require('./moodlogo.png')} alt="Mood logo" /></h1>
                 <h3>Finding the perfect song to suit your Mood.</h3>
                 
-                <p>To get started, click to type or speak how you're feeling.</p>
+                <p>To get started, click to type or press the button to speak how you're feeling.</p>
 
                 <div className="todoapp stack-large">
                     <Form addStatement={addStatement} />
                 </div>
+
+                <a onClick={goVoice} href=''>Use Voice</a> 
+                {// Click to access the voice option
+                }
+            </main>}
+            
+            {toggleVoice && !toggleHome && <main>
+                <h3>Mood is listening...</h3>
+                <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1}/></p>
+                <a onClick={goHome} href=''>Return</a> 
+                {//transition to Mood Got
+                }
             </main>}
 
             {toggleHome && statement !== '' && song == null && <main>
@@ -48,6 +73,7 @@ function App(props) {
                 <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1}/></p>
                 {// loading icons not working yet
                 }
+                <a onClick={goHome} href=''>Return</a> 
             </main>}
             {
                 // above will show while song is loading
@@ -63,7 +89,7 @@ function App(props) {
             {
                 // about page
             }
-            {!toggleHome && <main>
+            {!toggleHome && !toggleVoice && <main>
                 <h1>About Mood</h1>
                 <h3>Finding the perfect song to suit your Mood.</h3>
                 <p>When you tell Mood how you're feeling, the app analyzes your statement to determine key factors about your emotional context.</p>
