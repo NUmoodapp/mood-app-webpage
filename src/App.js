@@ -22,7 +22,7 @@ function App(props) {
     function goHome(e) {
         setToggleHome(true);
         setToggleVoice(false);
-        statement = '';
+        setStatement('');
         e.preventDefault();
     }
 
@@ -49,11 +49,9 @@ function App(props) {
                 
                 <p>To get started, click to type or press the button to speak how you're feeling.</p>
 
-                <div className="todoapp stack-large">
-                    <Form addStatement={addStatement} />
-                </div>
+                <Form addStatement={addStatement} />
 
-                <a onClick={goVoice} href=''>Use Voice</a> 
+                <p><button onClick={goVoice} href=''>Use Voice</button></p>
                 {// Click to access the voice option
                 }
             </main>}
@@ -61,7 +59,7 @@ function App(props) {
             {toggleVoice && !toggleHome && <main>
                 <h3>Mood is listening...</h3>
                 <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1}/></p>
-                <a onClick={goHome} href=''>Return</a> 
+                <a onClick={goHome} href=''>Go back</a> 
                 {//transition to Mood Got
                 }
             </main>}
@@ -71,9 +69,7 @@ function App(props) {
                 <p>"{statement}"</p>
                 <p>Finding the perfect song to match your mood...</p>
                 <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1}/></p>
-                {// loading icons not working yet
-                }
-                <a onClick={goHome} href=''>Return</a> 
+                <a onClick={goHome} href=''>Go back</a>
             </main>}
             {
                 // above will show while song is loading

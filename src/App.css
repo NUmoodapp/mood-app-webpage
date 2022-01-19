@@ -35,7 +35,7 @@ nav {
 }
 
 a {
-    color: #1E51BE;
+    color: #1548B5;
     text-decoration: none;
 }
 
@@ -103,7 +103,11 @@ body {
 }
 
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
     /* Media queries go here */
+    main {
+        box-sizing: border-box;
+        width: 100%;
+    }
 }
 
