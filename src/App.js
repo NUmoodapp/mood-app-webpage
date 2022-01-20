@@ -30,6 +30,9 @@ function App(props) {
         setToggleVoice(true);
         setToggleHome(false);
         e.preventDefault();
+        // is there where i would implement the listening function?
+        // currently just working to understand everything before trying
+        // to implement anything
         
         {// Voice state option
         }
