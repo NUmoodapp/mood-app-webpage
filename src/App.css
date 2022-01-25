@@ -16,15 +16,20 @@ nav {
     z-index: 1;
 }
 
-    nav a {
+    nav button {
+        background: none !important;
+        border: none;
+        padding: 0 !important;
+        cursor: pointer;
         margin: 1em 0;
         vertical-align: middle;
         color: black;
+        font-size: medium;
     }
 
-    nav a img {
-        height: 1.25em;
-    }
+        nav button img {
+            height: 1.25em;
+        }
 
 .logo {
     font-family: Comfortaa-VariableFont_wght;
@@ -55,10 +60,10 @@ h3 {
     font-family: Comfortaa-VariableFont_wght;
 }
 
-h3 img, h1 img {
-    height: 0.89em;
-    vertical-align: baseline;
-}
+    h3 img, h1 img {
+        height: 0.89em;
+        vertical-align: baseline;
+    }
 
 card {
     background-color: white;
@@ -110,4 +115,3 @@ body {
         width: 100%;
     }
 }
-
