@@ -64,7 +64,7 @@ export default class Speech extends Component {
         return (
             <div className="app-container">
 
-                <i className="fas fa-microphone fa-lg mr-2" onClick={() => this.sttFromMic()}></i>
+                {!this.state.clicked && <h1><i className="fas fa-microphone fa-lg mr-2" onClick={() => this.sttFromMic()}></i></h1>}
                 
                 {!this.state.gotStatement && this.state.clicked &&
                     <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1} /></p>}

@@ -39,12 +39,12 @@ function App(props) {
 
                 {statement === '' && <div>
                     <p>To get started, click to type or press the button to speak how you're feeling.</p>
-
-                    <Form addStatement={addStatement} />
-                    <br />
                     <Speech addStatement={addStatement} />
                     {// Speech.js handles all the speech to text!
                     }
+                    <Form addStatement={addStatement} />
+                    <br />
+                    
                 </div>}
 
                 {statement !== '' && <div>
