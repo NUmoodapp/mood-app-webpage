@@ -107,11 +107,14 @@ body {
     /* Media queries go here */
 }
 
-
 @media only screen and (max-width: 700px) {
     /* Media queries go here */
     main {
         box-sizing: border-box;
+        width: 100%;
+    }
+
+    .TextBox{
         width: 100%;
     }
 }
