@@ -64,7 +64,9 @@ export default class Speech extends Component {
         return (
             <div className="app-container">
 
-                <i className="fas fa-microphone fa-lg mr-2" onClick={() => this.sttFromMic()}></i>
+                {!this.state.clicked &&
+                    <img className="fas fa-microphone fa-lg mr-2" src={require('./microphone.png').default} alt="Microphone" onClick={() => this.sttFromMic()} width="70px" />
+                    }
                 
                 {!this.state.gotStatement && this.state.clicked &&
                     <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1} /></p>}
