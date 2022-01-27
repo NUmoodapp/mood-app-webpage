@@ -57,7 +57,7 @@ function App(props) {
                 {statement !== '' && song == null && <div>
                     <p>Finding the perfect song to match your mood...</p>
                     <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1} /></p>
-                    <a onClick={goHome} href=''>Go back</a>
+                    <button onClick={goHome} >Go Back</button>
                 </div>}
                 {
                     // above will show while song is loading
