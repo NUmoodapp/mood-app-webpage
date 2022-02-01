@@ -9,9 +9,14 @@ function App(props) {
     const [statement, setStatement] = useState('');
     const [toggleHome, setToggleHome] = useState(true);
     const [song, setSong] = useState(null);
+    const [speaking, setSpeaking] = useState(false);
 
     function addStatement(newStatement) {
         setStatement(newStatement);
+    }
+
+    function nowSpeaking(x){
+        setSpeaking(x);
     }
 
     function goToAbout(e) {
@@ -22,6 +27,7 @@ function App(props) {
     function goHome(e) {
         setToggleHome(true);
         setStatement('');
+        setSpeaking(false);
         e.preventDefault();
     }
 
@@ -39,10 +45,12 @@ function App(props) {
 
                 {statement === '' && <div>
                     <p>To get started, click to type or press the button to speak how you're feeling.</p>
-                    <Speech addStatement={addStatement} />
+                    <Speech addStatement={addStatement} nowSpeaking={nowSpeaking} />
                     {// Speech.js handles all the speech to text!
                     }
-                    <Form addStatement={addStatement} />
+                    {!speaking && 
+                        <Form addStatement={addStatement} />
+                    }
                     <br />
                     
                 </div>}

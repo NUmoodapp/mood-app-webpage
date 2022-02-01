@@ -42,6 +42,8 @@ export default class Speech extends Component {
             clicked: true,
         });
 
+        this.props.nowSpeaking(true);
+
         recognizer.recognizeOnceAsync(result => {
             let displayText;
             if (result.reason === ResultReason.RecognizedSpeech) {

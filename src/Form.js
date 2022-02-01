@@ -3,6 +3,7 @@ import React, { useState } from "react";
 // credit to https://github.com/mdn/todo-react/blob/master/src/
 // mozilla react to-do app starter code
 
+
 function Form(props) {
     const [name, setName] = useState('');
 
@@ -21,6 +22,7 @@ function Form(props) {
         setName(e.target.value);
     }
 
+
     return (
         <form onSubmit={handleSubmit}>
             <input
@@ -31,7 +33,7 @@ function Form(props) {
                 autoComplete="off"
                 value={name}
                 onChange={handleChange}
-                placeholder="What's up?"
+                placeholder = "I feel..."
             />
             <button type="submit" className="btn btn__primary btn__lg">
                 Submit
