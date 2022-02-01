@@ -10,16 +10,33 @@ function App(props) {
     const [toggleHome, setToggleHome] = useState(true);
     const [song, setSong] = useState(null);
     const [speaking, setSpeaking] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
-
-    useEffect(() => {
-        fetch('/time').then(res => res.json()).then(data => {
-            setCurrentTime(data.time);
-        });
-    }, []);
 
     function addStatement(newStatement) {
         setStatement(newStatement);
+        {
+            // When we get a statement, call api.py with the statement and set the returned with setSong
+        }
+        console.log(JSON.stringify({ 'statement': newStatement }));
+        fetch('/song', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 'statement': newStatement })
+        })
+            .then(res => res.json())
+            .then(data => {
+                setSong(data.song);
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function findSong() {
+        console.log(statement)
+        
     }
 
     function nowSpeaking(x){
@@ -52,7 +69,6 @@ function App(props) {
 
                 {statement === '' && <div>
                     <p>To get started, click to type or press the button to speak how you're feeling.</p>
-                    <p>{ currentTime } </p>
                     <Speech addStatement={addStatement} nowSpeaking={nowSpeaking} />
                     {// Speech.js handles all the speech to text!
                     }
@@ -81,7 +97,8 @@ function App(props) {
                 }
                 {statement !== '' && song != null && <div>
                     <p>Here's the perfect song for you:</p>
-                    <iframe title="Spotify Link" src="https://open.spotify.com/embed/track/3n69hLUdIsSa1WlRmjMZlW?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                    <p>{song} </p>
+                    <iframe title="Spotify Link" src="https://open.spotify.com/embed/track/3n69hLUdIsSa1WlRmjMZlW?utm_source=generator" width="100%" height="380" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
                 </div>}
             </main>}
 
