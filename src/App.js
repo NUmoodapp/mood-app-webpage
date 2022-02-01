@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "./Form";
 import LoadingIcons from 'react-loading-icons';
 import Speech from "./Speech";
@@ -10,6 +10,13 @@ function App(props) {
     const [toggleHome, setToggleHome] = useState(true);
     const [song, setSong] = useState(null);
     const [speaking, setSpeaking] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+
+    useEffect(() => {
+        fetch('/time').then(res => res.json()).then(data => {
+            setCurrentTime(data.time);
+        });
+    }, []);
 
     function addStatement(newStatement) {
         setStatement(newStatement);
@@ -45,6 +52,7 @@ function App(props) {
 
                 {statement === '' && <div>
                     <p>To get started, click to type or press the button to speak how you're feeling.</p>
+                    <p>{ currentTime } </p>
                     <Speech addStatement={addStatement} nowSpeaking={nowSpeaking} />
                     {// Speech.js handles all the speech to text!
                     }
