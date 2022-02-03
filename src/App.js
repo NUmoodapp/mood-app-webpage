@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "./Form";
 import LoadingIcons from 'react-loading-icons';
 import Speech from "./Speech";
@@ -13,6 +13,30 @@ function App(props) {
 
     function addStatement(newStatement) {
         setStatement(newStatement);
+        {
+            // When we get a statement, call api.py with the statement and set the returned with setSong
+        }
+        console.log(JSON.stringify({ 'statement': newStatement }));
+        fetch('/song', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 'statement': newStatement })
+        })
+            .then(res => res.json())
+            .then(data => {
+                setSong(data.song);
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function findSong() {
+        console.log(statement)
+        
     }
 
     function nowSpeaking(x){
@@ -73,7 +97,8 @@ function App(props) {
                 }
                 {statement !== '' && song != null && <div>
                     <p>Here's the perfect song for you:</p>
-                    <iframe title="Spotify Link" src="https://open.spotify.com/embed/track/3n69hLUdIsSa1WlRmjMZlW?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                    <p>{song} </p>
+                    <iframe title="Spotify Link" src="https://open.spotify.com/embed/track/3n69hLUdIsSa1WlRmjMZlW?utm_source=generator" width="100%" height="380" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
                 </div>}
             </main>}
 
