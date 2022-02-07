@@ -52,6 +52,7 @@ function App(props) {
         setToggleHome(true);
         setStatement('');
         setSpeaking(false);
+        setSong(null);
         e.preventDefault();
     }
 
@@ -99,6 +100,7 @@ function App(props) {
                     <p>Here's the perfect song for you:</p>
                     <p>{song[0]} </p>
                     <iframe title="Youtube Link" src={song[1]} width="100%" height="380" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                    <button onClick={goHome} >Go Back</button>
                 </div>}
             </main>}
 
