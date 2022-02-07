@@ -97,8 +97,8 @@ function App(props) {
                 }
                 {statement !== '' && song != null && <div>
                     <p>Here's the perfect song for you:</p>
-                    <p>{song} </p>
-                    <iframe title="Spotify Link" src="https://open.spotify.com/embed/track/3n69hLUdIsSa1WlRmjMZlW?utm_source=generator" width="100%" height="380" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                    <p>{song[0]} </p>
+                    <iframe title="Youtube Link" src={song[1]} width="100%" height="380" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
                 </div>}
             </main>}
 
