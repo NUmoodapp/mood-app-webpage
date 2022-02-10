@@ -13,9 +13,9 @@
 ## Setting up the back end server 
 I followed this guide https://blog.miguelgrinberg.com/post/how-to-create-a-react--flask-project for the backend. Here's the gist:
 
-1. Navigate to the /api folder and run `python -m venv venv` and then `source venv/bin/activate` (mac) or `venv\Scripts\activate` (windows)
-2. Install packages with `pip install flask python-dotenv`
-3. Make sure the .flaskenv file is present, then run `flask run`
+1. Navigate to the /api folder and run `python -m venv venv` or `python3 -m virtual venv`(mac)'and then `source venv/bin/activate` (mac) or `venv\Scripts\activate` (windows)
+3. Install packages with `pip install flask python-dotenv`
+4. Make sure the .flaskenv file is present, then run `flask run`
 
 The back end won't look like much, but when it's running it'll give you a song when you input a statement to the front end. 
 
