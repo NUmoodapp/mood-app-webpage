@@ -67,13 +67,13 @@ function App(props) {
     return (
         <div>
             <nav>
-                <button onClick={goHome} className="logo"><img src={require('./moodapplogo.png').default} alt="Mood app logo"/></button>
+                <button onClick={goHome} className="logo"><img src={require('./moodapplogo.png')} alt="Mood app logo"/></button>
                 <button onClick={goToAbout} >About Mood</button>
             </nav>
             <main>
             {toggleHome && !toggleChat && <div>
                 <h1 >Welcome to</h1>
-                <h1 style={{ margin: "0", fontSize: "75pt" }}><img src={require('./moodlogo.png').default} alt="Mood logo" /></h1>
+                <h1 style={{ margin: "0", fontSize: "75pt" }}><img src={require('./moodlogo.png')} alt="Mood logo" /></h1>
                 <h3>Finding the perfect song to suit your Mood.</h3>
                 <p>To get started, click to chat.</p>
                 <button onClick={goChat}>Let's Chat!</button>
