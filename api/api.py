@@ -3,6 +3,8 @@ from flask import Flask, request
 import json
 import urllib.request
 import re
+import api_keys
+import requests
 
 app = Flask(__name__)
 
@@ -19,3 +21,25 @@ def get_song():
     if not video_ids:
         return {'song': ''}
     return {'song': [statement, "https://www.youtube.com/embed/" + video_ids[0]]}
+
+
+
+# genius
+
+client_access_token = api_keys.my_client_access_token
+
+
+def search_genius(search_term):
+    genius_search_url = f"http://api.genius.com/search?q={search_term}&access_token={client_access_token}"
+
+    response = requests.get(genius_search_url)
+    json_data = response.json()
+
+    return json_data
+
+def get_song_list(json_data): #input = output of search()
+    for song in json_data["response"]["hits"]:
+        print(song["result"]["full_title"])
+
+
+# Use: get_song_list(search_genius("[search term]"))
