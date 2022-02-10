@@ -24,7 +24,7 @@ function Form(props) {
 
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} class = "textbox">
             <input
                 type="text"
                 id="new-statement-input"
@@ -34,10 +34,11 @@ function Form(props) {
                 value={name}
                 onChange={handleChange}
                 placeholder = "I feel..."
+                class = "text"
             />
-            <button type="submit" className="btn btn__primary btn__lg">
-                Submit
-            </button>
+            <form type="submit" className="btn btn__primary btn__lg">
+
+            </form>
         </form>
     );
 }
