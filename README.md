@@ -20,3 +20,8 @@ I followed this guide https://blog.miguelgrinberg.com/post/how-to-create-a-react
 The back end won't look like much, but when it's running it'll give you a song when you input a statement to the front end. 
 
 Message me with any questions!
+
+## Setting up IBM Watson -JR
+You can follow the guide here: https://github.com/watson-developer-cloud/python-sdk but really all you need to do is:
+
+1. Navigate to the /api folder and run `pip install --upgrade ibm-watson`
