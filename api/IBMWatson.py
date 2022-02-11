@@ -25,7 +25,7 @@ def SentimentAnalysis(statement):
                 relations=RelationsOptions(),
                 entities=EntitiesOptions(),
             )).get_result()
-        print(json.dumps(response, indent=2))
+        #print(json.dumps(response, indent=2))
         result = json.loads(json.dumps(response, indent=2))
         return result
     except:
