@@ -13,7 +13,8 @@ def get_song():
     # right now, statement will hold exactly what Azure transcribed
     # i.e., if Watson does text cleaning, it should be implemented here
     analysisResults = SentimentAnalysis(statement)
-    print(analysisResults['emotion']['document']['emotion'])
+    if (analysisResults):
+        print(analysisResults['emotion']['document']['emotion'])
     # right now, I just search youtube for the statement and return the id of the first video
     search_keywords = "+".join(statement.split())
     html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + search_keywords);
