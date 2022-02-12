@@ -8,6 +8,7 @@ import Speech from "./Speech";
 function App(props) {
     const [statement, setStatement] = useState('');
     const [toggleHome, setToggleHome] = useState(true);
+    const [toggleChat, setToggleChat] = useState(false);
     const [song, setSong] = useState(null);
     const [speaking, setSpeaking] = useState(false);
 
@@ -46,6 +47,7 @@ function App(props) {
     function goToAbout(e) {
         setToggleHome(false);
         e.preventDefault();
+        setToggleChat(false);
     }
 
     function goHome(e) {
@@ -54,6 +56,11 @@ function App(props) {
         setSpeaking(false);
         setSong(null);
         e.preventDefault();
+        setToggleChat(false);
+    }
+
+    function goChat(e) {
+        setToggleChat(true);
     }
 
 
@@ -63,35 +70,43 @@ function App(props) {
                 <button onClick={goHome} className="logo"><img src={require('./moodapplogo.png')} alt="Mood app logo"/></button>
                 <button onClick={goToAbout} >About Mood</button>
             </nav>
-            {toggleHome && <main>
+            <main>
+            {toggleHome && !toggleChat && <div>
                 <h1 >Welcome to</h1>
                 <h1 style={{ margin: "0", fontSize: "75pt" }}><img src={require('./moodlogo.png')} alt="Mood logo" /></h1>
                 <h3>Finding the perfect song to suit your Mood.</h3>
+                <p>To get started, click to chat.</p>
+                <button onClick={goChat}>Let's Chat!</button>
+                <br />
+            </div>}
 
-                {statement === '' && <div>
-                    <p>To get started, click to type or press the button to speak how you're feeling.</p>
-                    <Speech addStatement={addStatement} nowSpeaking={nowSpeaking} />
-                    {// Speech.js handles all the speech to text!
-                    }
-                    {!speaking && 
-                        <Form addStatement={addStatement} />
-                    }
-                    <br />
-                    
-                </div>}
+            {toggleChat && <div>
+                
+                <p class = "instructions">Hi, what's up!</p>
+                <br />      
+            </div>}
 
-                {statement !== '' && <div>
-                    <br />
-                    <h3>Mood got... </h3>
-                    <p>"{statement}"</p>
-                </div>
+            {statement === '' && toggleChat && <div>
+                <Speech addStatement={addStatement} nowSpeaking={nowSpeaking} />
+                {// Speech.js handles all the speech to text!
                 }
+                {!speaking && 
+                    <Form addStatement={addStatement} />
+                }
+                <br />      
+            </div>}
 
-                {statement !== '' && song == null && <div>
-                    <p>Finding the perfect song to match your mood...</p>
-                    <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1} /></p>
-                    <button onClick={goHome} >Go Back</button>
-                </div>}
+            {statement !== '' && <div>
+                    <br />
+                    <p class = "statement">"{statement}"</p>
+            </div>
+            }
+
+            {statement !== '' && song == null && <div>
+                <p class = "response">Finding the perfect song to match your mood...</p>
+                <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1} /></p>
+                <button onClick={goHome} >Go Back</button>
+            </div>}
                 {
                     // above will show while song is loading
                     // below will show when song is found (we can replace the embed url with the one we find)
@@ -102,7 +117,7 @@ function App(props) {
                     <iframe title="Youtube Link" src={song[1]} width="100%" height="380" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
                     <button onClick={goHome} >Go Back</button>
                 </div>}
-            </main>}
+            </main>
 
             {
                 // about page

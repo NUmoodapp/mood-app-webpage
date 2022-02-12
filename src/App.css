@@ -11,7 +11,7 @@ nav {
     padding: 8px;
     display: flex;
     justify-content: space-between;
-    background-color: white;
+    background-color: #f1f1f1;
     position: fixed;
     z-index: 1;
 }
@@ -19,12 +19,14 @@ nav {
     nav button {
         background: none !important;
         border: none;
-        padding: 0 !important;
+        padding: 0 !important; 
         cursor: pointer;
         margin: 1em 0;
         vertical-align: middle;
         color: black;
         font-size: medium;
+        font-family: Comfortaa-VariableFont_wght;
+        
     }
 
         nav button img {
@@ -85,13 +87,15 @@ card {
 
 main {
     display: flex;
+    box-sizing: border-box;
     flex-direction: column;
     justify-content: space-around;
     padding: 15px;
     position: absolute;
     text-align: center;
-    top: 70px;
-    left: 50%;
+    height:100%;
+    left:50%;
+    width: 100%;
     transform: translate(-50%, 0);
 }
 
@@ -100,8 +104,63 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     text-overflow: ellipsis;
-    background-color: #f1f1f1;
+    background-color: white;
 }
+
+.textbox {
+    right:120px;
+    left:20px;
+    position: absolute;
+    bottom: 5%;
+    width: 80%;
+}
+
+.text{
+    width: 100%;
+}
+
+.fas {
+    right: 3%;
+    position: absolute;
+    bottom: 3%;
+}
+
+.instructions{
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    
+    left: 3%;
+    top: 13%;
+    position: absolute;
+}
+
+.statement{
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+
+    right: 3%;
+    top: 26%;
+    position: absolute;
+}
+
+.response{
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+  
+    left: 3%;
+    top: 39%;
+    position: absolute;
+}
+
 
 @media only screen and (max-width: 1000px) {
     /* Media queries go here */
@@ -109,9 +168,8 @@ body {
 
 @media only screen and (max-width: 700px) {
     /* Media queries go here */
-    main {
-        box-sizing: border-box;
-        width: 100%;
-    }
+    
+       
+    
 
 }
