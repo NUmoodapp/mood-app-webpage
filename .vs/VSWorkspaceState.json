@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
+    "\\api",
     "\\src"
   ],
-  "SelectedNode": "\\package-lock.json",
+  "SelectedNode": "\\api\\api.py",
   "PreviewInSolutionExplorer": false
 }
