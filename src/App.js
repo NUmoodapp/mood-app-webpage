@@ -75,7 +75,7 @@ function App(props) {
                 <h1 >Welcome to</h1>
                 <h1 style={{ margin: "0", fontSize: "75pt" }}><img src={require('./moodlogo.png')} alt="Mood logo" /></h1>
                 <h3>Finding the perfect song to suit your Mood.</h3>
-                <p>To get started, click to chat.</p>
+                <p>Simply chat with Mood about your day!</p>
                 <button onClick={goChat}>Let's Chat!</button>
                 <br />
             </div>}
