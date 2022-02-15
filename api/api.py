@@ -17,13 +17,16 @@ def get_song():
     analysisResults = SentimentAnalysis(statement)
     if (analysisResults):
         print(analysisResults['emotion']['document']['emotion'])
-    # right now, I just search youtube for the statement and return the id of the first video
-    search_keywords = "+".join(statement.split())
-    html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + search_keywords);
-    video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
-    if not video_ids:
-        return {'song': ''}
-    return {'song': [statement, "https://www.youtube.com/embed/" + video_ids[0]]}
+    # Searches spotify for the statement input, if no song is found it defaults to tell them to try again, will do a better error handling later
+    emotion = max(analysisResults['emotion']['document']['emotion'],key=analysisResults['emotion']['document']['emotion'].get)
+    url = 'https://www.apitutor.org/spotify/simple/v1/search?q={track_name}&type=track&limit=1'.format(track_name=emotion)
+    tracks = requests.get(url).json()
+    if not tracks:
+        url = 'https://www.apitutor.org/spotify/simple/v1/search?q={track_name}&type=track&limit=1'.format(track_name='try again')
+        tracks = requests.get(url).json()
+        statement = 'No song found :('
+    link = "https://open.spotify.com/embed/track/{track_id}?utm_source=generator".format(track_id=tracks[0].get('id'))
+    return {'song': [statement, link]}
 
 
 
