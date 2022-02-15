@@ -177,6 +177,16 @@ body {
     align-self: center;
 }
 
+.center-text {
+    position: absolute;
+    margin-right: auto;
+    margin-left: auto;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    text-align: center;
+}
+
 /* Then style the iframe to fit in the container div with full height and width */
 iframe {
     width: auto;
