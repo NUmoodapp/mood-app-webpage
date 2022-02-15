@@ -3,6 +3,7 @@ const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
 const pino = require('express-pino-logger')();
+const qs = require('qs');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -37,6 +38,32 @@ app.get('/api/get-speech-token', async (req, res, next) => {
         } catch (err) {
             res.status(401).send('There was an error authorizing your speech key.');
         }
+    }
+});
+
+app.get('/api/get-spotify-token', async (req, res, next) => {
+    const client_id = process.env.CLIENT_ID;
+    const client_secret = process.env.CLIENT_SECRET;
+
+    const headers = {
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        auth: {
+            username:  client_id,
+            password: client_secret
+        },
+    };
+    const data = {
+        grant_type: 'client_credentials'
+    };
+
+    try {
+        const tokenResponse = await axios.post('https://accounts.spotify.com/api/token',qs.stringify(data),headers);
+        res.send({token: tokenResponse.data});
+    } catch(err) {
+        res.status(401).send('Unable to authorize Spotify token');
     }
 });
 
