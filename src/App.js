@@ -3,10 +3,12 @@ import React, { useState, useEffect } from "react";
 import Form from "./Form";
 import LoadingIcons from 'react-loading-icons';
 import Speech from "./Speech";
+import { getSpotifyToken } from "./Spotify"
 
 
 function App(props) {
     const [statement, setStatement] = useState('');
+    const [token, setToken] = useState(null);
     const [toggleHome, setToggleHome] = useState(true);
     const [toggleChat, setToggleChat] = useState(false);
     const [song, setSong] = useState(null);
@@ -17,13 +19,13 @@ function App(props) {
         {
             // When we get a statement, call api.py with the statement and set the returned with setSong
         }
-        console.log(JSON.stringify({ 'statement': newStatement }));
+        console.log(JSON.stringify({ 'statement': newStatement , 'token': token}));
         fetch('/song', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 'statement': newStatement })
+            body: JSON.stringify({ 'statement': newStatement , 'token': token})
         })
             .then(res => res.json())
             .then(data => {
@@ -61,6 +63,11 @@ function App(props) {
 
     function goChat(e) {
         setToggleChat(true);
+
+        getSpotifyToken()
+            .then((response) => {
+                setToken(response);
+            });
     }
 
 
