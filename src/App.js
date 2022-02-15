@@ -80,13 +80,11 @@ function App(props) {
                 <br />
             </div>}
 
-            {toggleChat && <div>
-                
-                <p class = "instructions">Hi, what's up!</p>
-                <br />      
+            {toggleChat && statement ==='' && <div class="chat">
+                <p class = "instructions">Hi, what's up!</p>  
             </div>}
 
-            {statement === '' && toggleChat && <div>
+            {toggleChat && statement === '' && <div>
                 <Speech addStatement={addStatement} nowSpeaking={nowSpeaking} />
                 {// Speech.js handles all the speech to text!
                 }
@@ -96,26 +94,26 @@ function App(props) {
                 <br />      
             </div>}
 
-            {statement !== '' && <div>
-                    <br />
-                    <p class = "statement">"{statement}"</p>
-            </div>
-            }
-
-            {statement !== '' && song == null && <div>
+            {statement !== '' && song == null && <div class="chat no-input">
+                <p class = "instructions">Hi, what's up!</p>
+                <p class = "statement">{statement}</p>
                 <p class = "response">Finding the perfect song to match your mood...</p>
-                <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1} /></p>
-                <button onClick={goHome} >Go Back</button>
+                <p class="center"><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1} /></p>
+                <p class="center"><button onClick={goHome} >Go Back</button></p>
             </div>}
-                {
-                    // above will show while song is loading
-                    // below will show when song is found (we can replace the embed url with the one we find)
-                }
-                {statement !== '' && song != null && <div>
-                    <p>Here's the perfect song for you:</p>
-                    <p>{song[0]} </p>
-                    <iframe title="Youtube Link" src={song[1]} width="100%" height="380" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-                    <button onClick={goHome} >Go Back</button>
+            {
+                // above will show while song is loading
+                // below will show when song is found (we can replace the embed url with the one we find)
+            }
+            {statement !== '' && song != null && <div class="chat no-input">
+                <p class="instructions">Hi, what's up!</p>
+                <p class="statement">{statement}</p>
+                <p class="response">Finding the perfect song to match your mood...</p>
+                <p class= "response">Here's the perfect song for you:</p>
+                <div class="response">
+                    <iframe title="Youtube Link" src={song[1]} frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                </div>
+                <p class="center"><button onClick={goHome} >Go Back</button></p>
                 </div>}
             </main>
 

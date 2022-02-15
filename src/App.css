@@ -132,21 +132,30 @@ body {
     padding: 10px;
     margin: 10px;
     
-    left: 3%;
-    top: 13%;
-    position: absolute;
 }
 
 .statement{
-    border: 2px solid #dedede;
-    background-color: #f1f1f1;
+    border: 2px solid rgb(184, 203, 183);
+    background-color: #E0ECDF;
     border-radius: 5px;
     padding: 10px;
     margin: 10px;
 
-    right: 3%;
-    top: 26%;
+    align-self: flex-end;
+}
+
+.chat {
     position: absolute;
+    bottom: 80px;
+    width: 90%;
+    align-self: center;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.no-input {
+    bottom: 10px;
 }
 
 .response{
@@ -156,9 +165,16 @@ body {
     padding: 10px;
     margin: 10px;
   
-    left: 3%;
-    top: 39%;
-    position: absolute;
+}
+
+.center {
+    align-self: center;
+}
+
+/* Then style the iframe to fit in the container div with full height and width */
+iframe {
+    width: auto;
+    height: auto;
 }
 
 
