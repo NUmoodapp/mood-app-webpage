@@ -28,7 +28,7 @@ function Form(props) {
             <input
                 type="text"
                 id="new-statement-input"
-                className="input input__lg"
+                className="input-large"
                 name="text"
                 autoComplete="off"
                 value={name}
