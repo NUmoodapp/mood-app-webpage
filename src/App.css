@@ -193,6 +193,10 @@ iframe {
     height: auto;
 }
 
+.about {
+    display: block;
+    top: 50px;
+}
 
 @media only screen and (max-width: 1000px) {
     /* Media queries go here */

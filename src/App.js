@@ -120,7 +120,7 @@ function App(props) {
             {
                 // about page
             }
-            {!toggleHome && <main>
+            {!toggleHome && <main class="about">
                 <h1>About Mood</h1>
                 <h3>Finding the perfect song to suit your Mood.</h3>
                 <p>When you tell Mood how you're feeling, the app analyzes your statement to determine key factors about your emotional context.</p>
