@@ -84,12 +84,12 @@ function App(props) {
                 <p class = "instructions">Hi, what's up!</p>  
             </div>}
 
-            {toggleChat && statement === '' && <div>
+            {toggleChat && statement === '' && <div class="chat chat-input">
                 <Speech addStatement={addStatement} nowSpeaking={nowSpeaking} />
                 {// Speech.js handles all the speech to text!
                 }
                 {!speaking && 
-                    <Form addStatement={addStatement} />
+                    <Form class="input-large" addStatement={addStatement} />
                 }
                 <br />      
             </div>}
