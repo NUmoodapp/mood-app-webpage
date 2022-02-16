@@ -69,3 +69,29 @@ def get_recommendations(seed_tracks, seed_artists, target_emotions, bearer):
         # print(recs)
         single_rec = random.choice(recs)
         return single_rec[0],single_rec[1]
+
+
+
+""" Get audio features for a list of tracks, map them in dictionary to return """
+def get_track_features(tracks, bearer):
+    features = {}
+    for track_id in tracks:
+        query = "https://api.spotify.com/v1/audio-features/{id}".format(id=track_id)
+        response = requests.get(query,
+                headers={"Content-Type":"application/json",
+                            "Authorization":"Bearer {}".format(bearer)}).json()
+        features[track_id] = response
+    return features
+
+
+""" Get best match from dictionary of track features to parameter values supplied.
+        - Decide which parameters to pass into the function / make helper function in this file
+        - Come up with a matching scheme, ie do we:
+            - weight different parameters higher that others?
+            - do we sum the differences for each value and choose the song with the smallest overall sum?
+            - do we use some algorithmic matching software or just build our own scheme?
+            - etc.
+"""
+def get_match(track_features, params):
+    # TO DO
+    continue
