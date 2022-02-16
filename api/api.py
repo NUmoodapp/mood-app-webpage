@@ -26,6 +26,7 @@ def get_song():
     song_list = get_song_list_parsed(search_genius("[{emotion}]"))
     tracks,artists = scrape_list_data(song_list,spotify_token)
     song_id, name = get_recommendations(tracks,artists,emotion,spotify_token)
+    # features  = get_track_features(tracks, spotify_token) -> Gets feature values for all tracks in list, returns a dictionary
 
 
     link = "https://open.spotify.com/embed/track/{track_id}?utm_source=generator".format(track_id=song_id)
