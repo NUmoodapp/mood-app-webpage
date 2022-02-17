@@ -14,11 +14,12 @@ app = Flask(__name__)
 def get_song():
     statement = request.get_json().get('statement')
     spotify_token = request.get_json().get('token')
+    print("token: ",spotify_token)
     # right now, statement will hold exactly what Azure transcribed
     # i.e., if Watson does text cleaning, it should be implemented here
     analysisResults = SentimentAnalysis(statement)
     if (analysisResults):
-        print(analysisResults['emotion']['document']['emotion'])
+        print("analysisResults:",analysisResults['emotion']['document']['emotion'])
 
     # Searches spotify for the statement input, if no song is found it defaults to tell them to try again, will do a better error handling later
     emotion = max(analysisResults['emotion']['document']['emotion'],key=analysisResults['emotion']['document']['emotion'].get)

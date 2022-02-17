@@ -65,9 +65,12 @@ function App(props) {
         setToggleChat(true);
 
         getSpotifyToken()
-            .then((response) => {
-                setToken(response);
-            });
+        .then((response) => {
+            setToken(response);
+        })
+        .catch(error => {
+            console.error("error: no spotify token found: ",error);
+        });
     }
 
 

@@ -10,7 +10,7 @@ def all_genres(bearer):
                             headers={"Content-Type":"application/json",
                                     "Authorization":"Bearer {}".format(bearer)}).json()
     if "error" in response:
-        print("Error in all_genres: {code}".format(code=all_category_data["error"]["status"]))
+        print("Error in all_genres: {code}".format(code=response["error"]["status"]))
         return []
     else:
         available_genre_seeds = response["genres"]
@@ -24,12 +24,12 @@ def scrape_list_data(song_list, bearer):
     for song, artist in song_list:
         query = "https://api.spotify.com/v1/search?q=track:{track_name}%20artist:{artist_name}&type=track&limit=1".format(track_name=song,artist_name=artist)
         response = requests.get(query,
-                    headers={"Content-Type":"application/json",
-                                "Authorization":"Bearer {}".format(bearer)}).json()
+                                headers={"Content-Type":"application/json",
+                                            "Authorization":"Bearer {}".format(bearer)}).json()
         if "tracks" not in response or response["tracks"]["items"] == []:#"error" in response:
-            print("Error in scrape_list_data: ")
+            print("Song not found in scrape_list_data, song skipped: ",song)
             continue
-        response = response["items"][0]
+        response = response["tracks"]["items"][0]
         song_id_list.append(response["id"])
         artists_id_list.append(response["artists"][0]["id"])
     return song_id_list, artists_id_list
@@ -60,13 +60,12 @@ def get_recommendations(seed_tracks, seed_artists, target_emotions, bearer):
         genres = '%2C'.join(seed_genres)
     query = "https://api.spotify.com/v1/recommendations?seed_artists={artists}&seed_genres={genres}&seed_tracks={tracks}".format(artists=artists,genres=genres,tracks=tracks)
     response = requests.get(query,
-            headers={"Content-Type":"application/json",
-                        "Authorization":"Bearer {}".format(bearer)}).json()
+                            headers={"Content-Type":"application/json",
+                                        "Authorization":"Bearer {}".format(bearer)}).json()
     if "error" not in response:
         recs = response["tracks"]
         for index, data in enumerate(recs):
             recs[index] = [data["id"],data["name"]]
-        # print(recs)
         single_rec = random.choice(recs)
         return single_rec[0],single_rec[1]
 
@@ -78,8 +77,8 @@ def get_track_features(tracks, bearer):
     for track_id in tracks:
         query = "https://api.spotify.com/v1/audio-features/{id}".format(id=track_id)
         response = requests.get(query,
-                headers={"Content-Type":"application/json",
-                            "Authorization":"Bearer {}".format(bearer)}).json()
+                                headers={"Content-Type":"application/json",
+                                            "Authorization":"Bearer {}".format(bearer)}).json()
         features[track_id] = response
     return features
 
