@@ -26,7 +26,7 @@ def scrape_list_data(song_list, bearer):
         response = requests.get(query,
                     headers={"Content-Type":"application/json",
                                 "Authorization":"Bearer {}".format(bearer)}).json()["tracks"]
-        if response["items"] == []:#"error" in response:
+        if "tracks" not in response or response["tracks"]["items"] == []:#"error" in response:
             print("Error in scrape_list_data: ")
             continue
         response = response["items"][0]
@@ -94,4 +94,4 @@ def get_track_features(tracks, bearer):
 """
 def get_match(track_features, params):
     # TO DO
-    continue
+    pass
