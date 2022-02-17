@@ -25,7 +25,7 @@ def scrape_list_data(song_list, bearer):
         query = "https://api.spotify.com/v1/search?q=track:{track_name}%20artist:{artist_name}&type=track&limit=1".format(track_name=song,artist_name=artist)
         response = requests.get(query,
                     headers={"Content-Type":"application/json",
-                                "Authorization":"Bearer {}".format(bearer)}).json()["tracks"]
+                                "Authorization":"Bearer {}".format(bearer)}).json()
         if "tracks" not in response or response["tracks"]["items"] == []:#"error" in response:
             print("Error in scrape_list_data: ")
             continue
