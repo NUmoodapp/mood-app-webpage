@@ -99,12 +99,9 @@ def connect_genius(search_term): #rename
 
     return song_list
 
-#search combinations of keywords
 
-# print(connect_genius('i am sad and i like legos and airplanes and basketball'))
-# connect_genius('i am sad and i like legos and airplanes and basketball')
 
-# combos = [[()], [('airplanes',), ('basketball',), ('legos',)], [('airplanes', 'basketball'), ('airplanes', 'legos'), ('basketball', 'legos')], [('airplanes', 'basketball', 'legos')]]
-# print(strip_combos(combos))
+# print(get_song_list(search_genius("travel")))
 
-print(get_song_list(search_genius("travel")))
+# to do
+# deal with weird \xa0 formatting
