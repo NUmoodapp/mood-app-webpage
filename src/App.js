@@ -4,6 +4,7 @@ import Form from "./Form";
 import LoadingIcons from 'react-loading-icons';
 import Speech from "./Speech";
 import { getSpotifyToken } from "./Spotify"
+import { getSpotifyTokenOrRefresh } from './token_util';
 
 
 function App(props) {
@@ -64,13 +65,13 @@ function App(props) {
     function goChat(e) {
         setToggleChat(true);
 
-        getSpotifyToken()
-        .then((response) => {
-            setToken(response);
-        })
-        .catch(error => {
-            console.error("error: no spotify token found: ",error);
-        });
+        getSpotifyTokenOrRefresh()
+            .then((response) => {
+                setToken(response.authToken)
+            })
+            .catch(error => {
+                console.log("error: no spotify token found: ",error);
+            });
     }
 
 
