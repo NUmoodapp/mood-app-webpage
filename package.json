@@ -12,6 +12,7 @@
         "dotenv": "^8.2.0",
         "ibm-watson": "^6.2.2",
         "microsoft-cognitiveservices-speech-sdk": "^1.18.1",
+        "qs": "^6.10.3",
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
         "react-loading-icons": "^1.0.8",

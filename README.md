@@ -7,8 +7,9 @@
 ## How to run the app
 
 1. Clone this repo, then change directory to the project root and run `npm install` to install dependencies.
-2. To run the Express server and React app together, run `npm run dev`.
-3. To run the backend, navigate to the /api folder and run `flask run`. You may need to set up your python dependencies first (see below).
+2. Run `npm install qs` to install necessary module.
+3. To run the Express server and React app together, run `npm run dev`.
+4. To run the backend, navigate to the /api folder and run `flask run`. You may need to set up your python dependencies first (see below).
 
 ## Setting up the back end server 
 I followed this guide https://blog.miguelgrinberg.com/post/how-to-create-a-react--flask-project for the backend. Here's the gist:
