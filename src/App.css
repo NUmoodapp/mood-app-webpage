@@ -59,8 +59,14 @@ p {
 button {
     font-family: Comfortaa-VariableFont_wght;
     padding: 10px 24px;
+    /* border-radius: 2px; */
+    transition-duration: 0.4s;
 }
 
+button:hover {
+    background-color: #4CAF50; /* Green */
+    /* color: white */
+}
 
 h1 {
     font-family: Comfortaa-VariableFont_wght;
