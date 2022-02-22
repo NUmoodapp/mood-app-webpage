@@ -52,6 +52,15 @@ nav div {
     flex-direction: row;
 }
 
+p {
+    font-family: Comfortaa-VariableFont_wght;
+}
+
+button {
+    font-family: Comfortaa-VariableFont_wght;
+    padding: 10px 24px;
+}
+
 
 h1 {
     font-family: Comfortaa-VariableFont_wght;
