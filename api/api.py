@@ -31,6 +31,9 @@ def get_song():
     song_id, name = get_recommendations(tracks,artists,emotion,spotify_token)
     # features  = get_track_features(tracks, spotify_token) -> Gets feature values for all tracks in list, returns a dictionary
 
+    print(connect_genius(statement))
+
+    print(get_song_list_p(connect_genius(statement)))
 
     link = "https://open.spotify.com/embed/track/{track_id}?utm_source=generator".format(track_id=song_id)
     return {'song': [name, link]}
@@ -64,6 +67,14 @@ def get_song_list_parsed(json_data):
     for song in json_data["response"]["hits"]:
         title = song["result"]["full_title"].split('by')[0]
         artist = song["result"]["artist_names"]
+        song_list.append([title,artist])
+    return song_list
+
+def get_song_list_p(data):
+    song_list = []
+    for song in data:
+        title = song.split('by')[0]
+        artist = song.split('by')[1]
         song_list.append([title,artist])
     return song_list
 
