@@ -91,6 +91,16 @@ def get_track_features(tracks, bearer):
             - do we use some algorithmic matching software or just build our own scheme?
             - etc.
 """
-def get_match(track_features, params):
+def get_match(track_features, valence, bearer):
     # TO DO
-    pass
+    # Currently just returns the data for the first track in the dictionary passed in
+    for track in track_features.keys():
+        match_id = track
+        query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
+        response = requests.get(query,
+                                headers={"Content-Type":"application/json",
+                                            "Authorization":"Bearer {}".format(bearer)}).json()
+        match_name = response["name"]
+        return match_id, match_name
+
+

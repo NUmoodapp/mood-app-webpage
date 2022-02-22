@@ -16,7 +16,7 @@ app = Flask(__name__)
 def get_song():
     statement = request.get_json().get('statement')
     spotify_token = request.get_json().get('token')
-    print("token: ",spotify_token)
+
     # right now, statement will hold exactly what Azure transcribed
     # i.e., if Watson does text cleaning, it should be implemented here
     analysisResults = SentimentAnalysis(statement)
@@ -26,17 +26,14 @@ def get_song():
     # Searches spotify for the statement input, if no song is found it defaults to tell them to try again, will do a better error handling later
     emotion = max(analysisResults['emotion']['document']['emotion'],key=analysisResults['emotion']['document']['emotion'].get)
 
-    song_list = get_song_list_parsed(search_genius("[{emotion}]"))
-    tracks,artists = scrape_list_data(song_list,spotify_token)
-    song_id, name = get_recommendations(tracks,artists,emotion,spotify_token)
-    # features  = get_track_features(tracks, spotify_token) -> Gets feature values for all tracks in list, returns a dictionary
+    # Steps to get track features from genius results:
+    songs = parse_songs(connect_genius(statement))
+    tracks,artists = scrape_list_data(songs, spotify_token)
+    features = get_track_features(tracks, spotify_token)
+    best_song_id, best_song_name = get_match(features, valence=0, bearer=spotify_token)
 
-    print(connect_genius(statement))
-
-    print(get_song_list_p(connect_genius(statement)))
-
-    link = "https://open.spotify.com/embed/track/{track_id}?utm_source=generator".format(track_id=song_id)
-    return {'song': [name, link]}
+    link = "https://open.spotify.com/embed/track/{track_id}?utm_source=generator".format(track_id=best_song_id)
+    return {'song': [best_song_name, link]}
 
 
 
@@ -62,20 +59,11 @@ def get_song_list(json_data, cutoff = False): #input = output of search()
     return song_list
 
 
-def get_song_list_parsed(json_data):
-    song_list = []
-    for song in json_data["response"]["hits"]:
-        title = song["result"]["full_title"].split('by')[0]
-        artist = song["result"]["artist_names"]
-        song_list.append([title,artist])
-    return song_list
-
-def get_song_list_p(data):
+def parse_songs(data):
     song_list = []
     for song in data:
-        title = song.split('by')[0]
-        artist = song.split('by')[1]
-        song_list.append([title,artist])
+        split_song = song.split(' by ')
+        song_list.append(split_song)
     return song_list
 
 # Use: get_song_list(search_genius("[search term]"))
@@ -160,5 +148,5 @@ def connect_genius(search_term): #rename
 #connect song list return from connect_genius to get_song function somehow.
 #search for best song from the list?
 
-print(connect_genius("i like legos and airplanes and also I like food and videos"))
+# print(connect_genius("i like legos and airplanes and also I like food and videos"))
 
