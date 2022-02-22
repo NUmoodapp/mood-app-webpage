@@ -71,6 +71,18 @@ def strip_combos(combos):
 
     return ret
 
+def flatten_list(_2d_list):
+    flat_list = []
+    # Iterate through the outer list
+    for element in _2d_list:
+        if type(element) is list:
+            # If the element is of type list, iterate through the sublist
+            for item in element:
+                flat_list.append(item)
+        else:
+            flat_list.append(element)
+    return flat_list
+
 
 
 stop_words = ['the', 'and', 'a', 'an']
@@ -111,7 +123,7 @@ def connect_genius(search_term): #rename
 
             song_list.append(x)
             #make sure song list isn't too long
-    return song_list
+    return flatten_list(song_list)
 
 
 
@@ -121,5 +133,5 @@ def connect_genius(search_term): #rename
 #connect song list return from connect_genius to get_song function somehow.
 #search for best song from the list?
 
-# print(connect_genius("i like legos and airplanes and also I like food and videos"))
+print(connect_genius("i like legos and airplanes and also I like food and videos"))
 
