@@ -72,8 +72,6 @@ def strip_combos(combos):
     return ret
 
 
-   
-        
 
 stop_words = ['the', 'and', 'a', 'an']
 
@@ -120,7 +118,8 @@ def connect_genius(search_term): #rename
 # to do
 # ------
 
-# deal with weird \xa0 formatting - DONE
-# cutoff so not a crazy amount of return values
+#connect song list return from connect_genius to get_song function somehow.
+#search for best song from the list?
 
-print(connect_genius("i like legos and airplanes and also I like food and videos"))
+# print(connect_genius("i like legos and airplanes and also I like food and videos"))
+
