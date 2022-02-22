@@ -24,7 +24,8 @@ def SentimentAnalysis(statement):
                 concepts=ConceptsOptions(),
                 relations=RelationsOptions(),
                 entities=EntitiesOptions(),
-            )).get_result()
+            ),
+            language='en').get_result()
         #print(json.dumps(response, indent=2))
         result = json.loads(json.dumps(response, indent=2))
         return result

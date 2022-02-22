@@ -71,11 +71,14 @@ export default class Speech extends Component {
                     }
                 
                 {!this.state.gotStatement && this.state.clicked &&
-                    <p><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1} /></p>}
-
-                <div >
+                    <div className="center-text">
+                        <p ><LoadingIcons.BallTriangle stroke="#555" strokeOpacity={1} /></p>
                     <p>{this.state.displayText}</p>
-                </div>
+                        
+                     </div>
+                    }
+
+                
             </div>
         );
     }
