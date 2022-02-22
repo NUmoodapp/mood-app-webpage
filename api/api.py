@@ -1,3 +1,4 @@
+from sqlite3 import connect
 import time
 from flask import Flask, request
 from IBMWatson import SentimentAnalysis
@@ -30,6 +31,9 @@ def get_song():
     song_id, name = get_recommendations(tracks,artists,emotion,spotify_token)
     # features  = get_track_features(tracks, spotify_token) -> Gets feature values for all tracks in list, returns a dictionary
 
+    print(connect_genius(statement))
+
+    print(get_song_list_p(connect_genius(statement)))
 
     link = "https://open.spotify.com/embed/track/{track_id}?utm_source=generator".format(track_id=song_id)
     return {'song': [name, link]}
@@ -49,10 +53,12 @@ def search_genius(search_term):
 
     return json_data
 
-def get_song_list(json_data): #input = output of search()
+def get_song_list(json_data, cutoff = False): #input = output of search()
     song_list = []
     for song in json_data["response"]["hits"]:
         song_list.append(song["result"]["full_title"])
+
+    if cutoff: return song_list[0:3]
     return song_list
 
 
@@ -61,6 +67,14 @@ def get_song_list_parsed(json_data):
     for song in json_data["response"]["hits"]:
         title = song["result"]["full_title"].split('by')[0]
         artist = song["result"]["artist_names"]
+        song_list.append([title,artist])
+    return song_list
+
+def get_song_list_p(data):
+    song_list = []
+    for song in data:
+        title = song.split('by')[0]
+        artist = song.split('by')[1]
         song_list.append([title,artist])
     return song_list
 
@@ -84,9 +98,19 @@ def strip_combos(combos):
 
     return ret
 
+def flatten_list(_2d_list):
+    flat_list = []
+    # Iterate through the outer list
+    for element in _2d_list:
+        if type(element) is list:
+            # If the element is of type list, iterate through the sublist
+            for item in element:
+                flat_list.append(item)
+        else:
+            flat_list.append(element)
+    return flat_list
 
-   
-        
+
 
 stop_words = ['the', 'and', 'a', 'an']
 
@@ -99,25 +123,42 @@ def connect_genius(search_term): #rename
         search_keywords_list.append(s['text'])
     # print(search_keywords_list)
 
-   
+
     combos = []
     for r in range(len(search_keywords_list)+1):
         combinations_obj = itertools.combinations(search_keywords_list, r)
         combos.append(list(combinations_obj))
 
+
     combos = strip_combos(combos)
+    
+    if len(combos) > 6:
+        cutoff = False #change if necessary?
+        combos = combos[0:6]
+    else:
+        cutoff = False
+
     
 
 
     for word_combo in combos:
         if word_combo.lower() not in stop_words: 
-            song_list.append(get_song_list(search_genius(word_combo)))
+            x = get_song_list(search_genius(word_combo), cutoff)
+            # print(x)
+            for song in range(len(x)):
+                x[song] = x[song].replace('\xa0', " ")
 
-    return song_list
+            song_list.append(x)
+            #make sure song list isn't too long
+    return flatten_list(song_list)
 
 
-
-# print(get_song_list(search_genius("travel")))
 
 # to do
-# deal with weird \xa0 formatting
+# ------
+
+#connect song list return from connect_genius to get_song function somehow.
+#search for best song from the list?
+
+print(connect_genius("i like legos and airplanes and also I like food and videos"))
+
