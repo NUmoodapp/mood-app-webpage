@@ -4,7 +4,7 @@ import Form from "./Form";
 import LoadingIcons from 'react-loading-icons';
 import Speech from "./Speech";
 import { getSpotifyTokenOrRefresh } from './token_util';
-
+import styles from './App.css';
 
 function App(props) {
     const [statement, setStatement] = useState('');
@@ -13,7 +13,29 @@ function App(props) {
     const [toggleChat, setToggleChat] = useState(false);
     const [song, setSong] = useState(null);
     const [speaking, setSpeaking] = useState(false);
+    let currentFont = 0;
 
+    function makeBigger(){
+        if(currentFont <0.6)
+            currentFont += 0.2;
+            setFont();
+    };
+     
+    function makeSmaller(){
+        if(currentFont >0.2)
+            currentFont -= 0.2;
+            setFont();
+    };
+     
+    function setFont() {
+        document.querySelector('h1').style.fontSize = `${2+currentFont}em`;
+        document.querySelector('h3').style.fontSize = `${1.17+currentFont}em`;
+        var list = document.querySelectorAll('p');
+        for (var x = 0; x < list.length; x++)
+            list[x].style.fontSize = `${1+currentFont}em`;
+    }
+    
+    
     function addStatement(newStatement) {
         setStatement(newStatement);
         {
@@ -77,7 +99,15 @@ function App(props) {
     return (
         <div>
             <nav>
+                {/* <select id="theme" onChange={this.change} value={this.state.value}>
+                    <option value = 'defaultTheme'>Default</option>
+                    <option value = 'desertTheme'>Desert</option>
+                    <option value = 'oceanTheme'>Ocean</option>
+                    <option value = 'highContrastTheme'>High Contrast</option>
+                </select> */}
                 <button onClick={goHome} className="logo"><img src={require('./moodapplogo.png')} alt="Mood app logo"/></button>
+                <button onClick={makeBigger} className="a1" title="Make font bigger">A</button>
+                <button onClick={makeSmaller} className="a2" title="Make font smaller">A</button>
                 <button onClick={goToAbout} >About Mood</button>
             </nav>
             <main>
