@@ -54,7 +54,11 @@ nav div {
 
 p {
     font-family: Comfortaa-VariableFont_wght;
+    font-size: 1em;
 }
+
+
+
 
 button {
     font-family: Comfortaa-VariableFont_wght;
@@ -212,6 +216,25 @@ iframe {
     display: block;
     top: 50px;
 }
+
+.a1 {
+    font-size: 2em;
+    display: flex;
+    color: black;
+    font-family: Comfortaa-VariableFont_wght;
+    align-self: center;
+    right: 200px;
+    position: absolute;
+ }
+.a2 {
+    font-size: 1em;
+    display: flex;
+    color: black;
+    font-family: Comfortaa-VariableFont_wght;
+    align-self: center;
+    right: 150px;
+    position: absolute;
+ }
 
 @media only screen and (max-width: 1000px) {
     /* Media queries go here */
