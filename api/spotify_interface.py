@@ -97,52 +97,22 @@ def get_match(track_features, emotions, bearer):
     valence_dist = {}
     total_dist = {}
     emotion = max(emotions,key=emotions.get)
+    energy = sum(emotions.values())/len(emotions.keys())
+    valence = abs(emotions['joy'] + emotions['sadness'])/2
 
-    # If joy is dominant emotion, just use min dist to joy
-    if emotion == 'joy':
-        print("Using joy as dominant emotion, finding min dist of danceability to joy...")
-        for track in track_features.keys():
-            danceability_dist[track] = abs(track_features[track]['danceability'] - emotions['joy'])
-        match_id = min(danceability_dist, key=danceability_dist.get)
-        query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
-        response = requests.get(query,
-                                headers={"Content-Type":"application/json",
-                                            "Authorization":"Bearer {}".format(bearer)}).json()
-        match_name = response["name"]
-        print("danceability_dist mapping: ",json.dumps(danceability_dist,indent=4))
-        print("best match (min dist): ",match_id,":",match_name)
-        return match_id, match_name
-
-    # If no emotion is above 0.5, use the average of all the emotions as the energy
-    if emotions[emotion] <= 0.5:
-        print("Using average of all emotions, finding min dist of energy to avg...")
-        energy = sum(emotions.values())/len(emotions.keys())
-        for track in track_features.keys():
-            energy_dist[track] = abs(track_features[track]['energy'] - energy)
-        match_id = min(energy_dist, key=energy_dist.get)
-        query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
-        response = requests.get(query,
-                                headers={"Content-Type":"application/json",
-                                            "Authorization":"Bearer {}".format(bearer)}).json()
-        match_name = response["name"]
-        print("energy_dist mapping: ",json.dumps(energy_dist,indent=4))
-        print("best match (min dist): ",match_id,":",match_name)
-        return match_id, match_name
-
-    # Else, use valence as the scale from joy to sadness
-    print("Using scale from joy to sadness, finding min dist of valence to scale...")
-    valence = abs(emotions['joy'] - emotions['sadness'])/2
+    # Get Distance for all three values
     for track in track_features.keys():
-        # If joy is dominant emotion, just use min dist to joy
+        danceability_dist[track] = abs(track_features[track]['danceability'] - emotions['joy'])
+        energy_dist[track] = abs(track_features[track]['energy'] - energy)
         valence_dist[track] = abs(track_features[track]['valence'] - valence)
-    match_id = min(valence_dist, key=valence_dist.get)
+        total_dist[track] = valence_dist[track] + 2*energy_dist[track] + 2*danceability_dist[track]
+    
+    match_id = min(total_dist, key=total_dist.get)
     query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
     response = requests.get(query,
                             headers={"Content-Type":"application/json",
                                         "Authorization":"Bearer {}".format(bearer)}).json()
     match_name = response["name"]
-    print("valence_dist mapping: ",json.dumps(valence_dist,indent=4))
+    print("total_dist mapping: ",json.dumps(total_dist,indent=4))
     print("best match (min dist): ",match_id,":",match_name)
     return match_id, match_name
-
-
