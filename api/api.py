@@ -26,6 +26,8 @@ def get_song():
     # Searches spotify for the statement input, if no song is found it defaults to tell them to try again, will do a better error handling later
     emotion = max(analysisResults['emotion']['document']['emotion'],key=analysisResults['emotion']['document']['emotion'].get)
 
+    print(all_categories(spotify_token))
+
     # Steps to get track features from genius results:
     songs = parse_songs(connect_genius(statement))
     tracks,artists = scrape_list_data(songs, spotify_token)
