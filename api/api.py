@@ -106,38 +106,47 @@ def connect_genius(search_term): #rename
     song_list = []
     res = SentimentAnalysis(search_term)
     search_keywords = res['keywords']
+    search_keywords_confidence_list = []
+    
     search_keywords_list = []
     for s in search_keywords:
         search_keywords_list.append(s['text'])
+        search_keywords_confidence_list.append(s['relevance'])
     # print(search_keywords_list)
+    # print(search_keywords_confidence_list)
 
 
-    combos = []
-    for r in range(len(search_keywords_list)+1):
-        combinations_obj = itertools.combinations(search_keywords_list, r)
-        combos.append(list(combinations_obj))
+    # combos = []
+    # for r in range(len(search_keywords_list)+1):
+    #     combinations_obj = itertools.combinations(search_keywords_list, r)
+    #     combos.append(list(combinations_obj))
 
 
-    combos = strip_combos(combos)
+    # combos = strip_combos(combos)
     
-    if len(combos) > 6:
-        cutoff = False #change if necessary?
-        combos = combos[0:6]
-    else:
-        cutoff = False
+    # if len(combos) > 6:
+    #     cutoff = False #change if necessary?
+    #     combos = combos[0:6]
+    # else:
+    #     cutoff = False
 
     
 
 
-    for word_combo in combos:
-        if word_combo.lower() not in stop_words: 
-            x = get_song_list(search_genius(word_combo), cutoff)
+
+    for word in search_keywords_list:
+        print(word)
+        wc = 0 #counter to pair with relevance
+        if word.lower() not in stop_words: 
+            x = get_song_list(search_genius(word))
             # print(x)
             for song in range(len(x)):
                 x[song] = x[song].replace('\xa0', " ")
+                x[song] = [x[song], search_keywords_confidence_list[wc]]
 
             song_list.append(x)
             #make sure song list isn't too long
+            wc += 1
     return flatten_list(song_list)
 
 
