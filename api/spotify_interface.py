@@ -27,11 +27,12 @@ def scrape_list_data(song_list, bearer):
                                 headers={"Content-Type":"application/json",
                                             "Authorization":"Bearer {}".format(bearer)}).json()
         if "tracks" not in response or response["tracks"]["items"] == []:#"error" in response:
-            print("Song not found in scrape_list_data, song skipped: ",song)
+            #print("Song not found in scrape_list_data, song skipped: ",song)
             continue
         response = response["tracks"]["items"][0]
         song_id_list.append(response["id"])
         artists_id_list.append(response["artists"][0]["id"])
+        print("Adding "+ song + " to search")
     return song_id_list, artists_id_list
 
 
@@ -91,10 +92,22 @@ def get_track_features(tracks, bearer):
             - do we use some algorithmic matching software or just build our own scheme?
             - etc.
 """
-def get_match(track_features, valence, bearer):
-    # TO DO
-    # Currently just returns the data for the first track in the dictionary passed in
+def get_match(track_features, emotions, bearer):
+    danceability_dist = {}
+    energy_dist = {}
+    valence_dist = {}
+    total_dist = {}
+    emotion = max(emotions,key=emotions.get)
+    energy = sum(emotions.values())/len(emotions.keys())
+    valence = abs(emotions['joy'] + emotions['sadness'])/2
+
+    # Get Distance for all three values
     for track in track_features.keys():
+        danceability_dist[track] = abs(track_features[track]['danceability'] - emotions['joy'])
+        energy_dist[track] = abs(track_features[track]['energy'] - energy)
+        valence_dist[track] = abs(track_features[track]['valence'] - valence)
+        total_dist[track] = valence_dist[track] + 2*energy_dist[track] + 2*danceability_dist[track]
+
         match_id = track
         query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
         response = requests.get(query,
@@ -102,5 +115,82 @@ def get_match(track_features, valence, bearer):
                                             "Authorization":"Bearer {}".format(bearer)}).json()
         match_name = response["name"]
         return match_id, match_name
+    
+    match_id = min(total_dist, key=total_dist.get)
+    query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
+    response = requests.get(query,
+                            headers={"Content-Type":"application/json",
+                                        "Authorization":"Bearer {}".format(bearer)}).json()
+    match_name = response["name"]
+    print("total_dist mapping: ",json.dumps(total_dist,indent=4))
+    print("best match (min dist): ",match_id,":",match_name)
+    return match_id, match_name
 
 
+""" Query all category ids defined by spotify """
+def all_categories(bearer):
+    query = "https://api.spotify.com/v1/browse/categories"
+    all_category_data = requests.get(query,
+                            headers={"Content-Type":"application/json",
+                                    "Authorization":"Bearer {}".format(bearer)}).json()
+    if "error" in all_category_data:
+        print("Error in all_categories: {code}".format(code=all_category_data["error"]["status"]))
+        return []
+    else:
+        data_items = all_category_data["categories"]["items"]
+        ids = []
+        for item in data_items:
+            ids.append(item["id"])
+        return ids
+
+
+
+""" From a category id, get all playlists under that id """
+def query_playlist_ids(category_id, bearer):
+    query = "https://api.spotify.com/v1/browse/categories/{category_id}/playlists".format(category_id=category_id)
+    response = requests.get(query,
+                    headers={"Content-Type":"application/json",
+                                "Authorization":"Bearer {}".format(bearer)}).json()
+    if "error" in response:
+        print("Error in query_playlist_ids: {code}".format(code=all_category_data["error"]["status"]))
+        return []
+    else:
+        data_items = response["playlists"]["items"]
+        playlist_ids = []
+        for item in data_items:
+            playlist_ids.append(item["id"])
+        return playlist_ids
+
+
+
+""" From a single playlist id, get all [track_id], [artist_id] in playlist """
+def scrape_playlist_data(playlist_id, bearer):
+    query = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks".format(playlist_id=playlist_id)
+    response = requests.get(query,
+                    headers={"Content-Type":"application/json",
+                                "Authorization":"Bearer {}".format(bearer)}).json()
+    if "error" in response:
+        print("Error in scrape_playlist_data: {code}".format(code=all_category_data["error"]["status"]))
+        return []
+    else:
+        data_items = response["items"]
+        track_data = []
+        artist_data = []
+        for item in data_items:
+            if item["track"] is not None:
+                track_data.append(item["track"]["id"])
+                artist_data.append(item["track"]["artists"][0]["id"])
+        return track_data, artist_data
+
+
+""" From a list of playlist ids, data from each, return lists [tracks], [artists] """
+def all_playlist_data(playlist_id_list, bearer):
+    all_tracks = []
+    all_artists = []
+    for id in playlist_id_list:
+        tracks, artists = scrape_playlist_data(id, bearer)
+        for track in tracks:
+            all_tracks.append(track)
+        for artist in artists:
+            all_artists.append(artist)
+    return all_tracks, all_artists
