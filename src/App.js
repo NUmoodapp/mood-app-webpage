@@ -10,13 +10,13 @@ let currentFont = 0;
 let pfont = 1;
 let h1font = 2;
 let h3font = 1.17;
-let mode = true;
 let fontcolor = 'black';
 
 function App(props) {
     const [statement, setStatement] = useState('');
     const [token, setToken] = useState(null);
     const [toggleHome, setToggleHome] = useState(true);
+    const [toggleMode, setToggleMode] = useState(true);
     const [toggleChat, setToggleChat] = useState(false);
     const [song, setSong] = useState(null);
     const [speaking, setSpeaking] = useState(false);
@@ -76,7 +76,7 @@ function App(props) {
     }
 
     function DarkMode(){
-        if(mode == true)
+        if(toggleMode)
         {
             if (toggleChat && statement ==='')
             {
@@ -90,8 +90,9 @@ function App(props) {
             {
                 document.querySelector('body').style.backgroundColor = '#152028';
             }
-            else
+            else 
             {
+                
                 document.querySelector('h1').style.color = `white`;
                 document.querySelector('h3').style.color = `white`;
                 var list = document.querySelectorAll('p');
@@ -100,7 +101,7 @@ function App(props) {
                 document.querySelector('body').style.backgroundColor = '#152028';
             }
             fontcolor = 'white';
-            mode = false;
+            setToggleMode(false);
             
         }
         else
@@ -117,7 +118,7 @@ function App(props) {
             {
                 document.querySelector('body').style.backgroundColor = 'white';
             }
-            else
+            else 
             {
                 document.querySelector('h1').style.color = `black`;
                 document.querySelector('h3').style.color = `black`;
@@ -127,7 +128,7 @@ function App(props) {
                 document.querySelector('body').style.backgroundColor = 'white';
             }
             fontcolor = 'black';
-            mode = true;
+            setToggleMode(true);
         }
         
 
@@ -214,7 +215,7 @@ function App(props) {
             <main>
             {toggleHome && !toggleChat && <div>
                 <h1 id = 'welcome' style={{fontSize: h1font +"em", color: fontcolor}}>Welcome to</h1>
-                <h1 id = 'logo' style={{ margin: "0", fontSize: "75pt" }}><img src={require('./moodlogo.png')} alt="Mood logo" /></h1>
+                <h1 id = 'logo' style={{ margin: "0", fontSize: "75pt" }}><img src={toggleMode ? require('./moodlogo.png') : require('./Moodlogowhite.png')} alt="Mood logo" /></h1>
                 <h3 id = 'intro' style={{fontSize: h3font +"em", color: fontcolor}}>Finding the perfect song to suit your Mood.</h3>
                 <p id = 'instruct' style={{fontSize: pfont +"em", color: fontcolor}}>Simply chat with Mood about your day!</p>
                 <button onClick={goChat}>Let's Chat!</button>
