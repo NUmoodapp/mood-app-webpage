@@ -149,6 +149,7 @@ body {
     border: 2px solid #dedede;
     background-color: #f1f1f1;
     border-radius: 5px;
+    font-size: 1em;
     padding: 10px;
     margin: 10px;
     
@@ -160,7 +161,7 @@ body {
     border-radius: 5px;
     padding: 10px;
     margin: 10px;
-
+    font-size: 1em;
     align-self: flex-end;
 }
 
@@ -189,6 +190,7 @@ body {
     border-radius: 5px;
     padding: 10px;
     margin: 10px;
+    font-size: 1em;
   
 }
 
@@ -233,6 +235,16 @@ iframe {
     font-family: Comfortaa-VariableFont_wght;
     align-self: center;
     right: 150px;
+    position: absolute;
+ }
+
+.dark {
+    font-size: 1em;
+    display: flex;
+    color: black;
+    font-family: Comfortaa-VariableFont_wght;
+    align-self: center;
+    left: 150px;
     position: absolute;
  }
 
