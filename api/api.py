@@ -30,6 +30,12 @@ def get_song():
     songs = parse_songs(connect_genius(statement))
     tracks,artists = scrape_list_data(songs, spotify_token)
     features = get_track_features(tracks, spotify_token)
+    
+    #check if features is empty:
+    # if not features:
+    #     pass
+    #     # return 'NULL'
+
     best_song_id, best_song_name = get_match(features, valence=0, bearer=spotify_token)
 
     link = "https://open.spotify.com/embed/track/{track_id}?utm_source=generator".format(track_id=best_song_id)
