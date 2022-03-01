@@ -17,7 +17,9 @@ I followed this guide https://blog.miguelgrinberg.com/post/how-to-create-a-react
 1. Navigate to the /api folder and run `python -m venv venv` or `python3 -m virtual venv`(mac) 
 2. and then `source venv/bin/activate` (mac) or `venv\Scripts\activate` (windows)
 3. Install packages with `pip install flask python-dotenv`
-4. Make sure the .flaskenv file is present, then run `flask run`
+4. Install nltk with `pip install nltk`
+5. Run `python -m nltk.downloader all` to install nltk packages
+6. Make sure the .flaskenv file is present, then run `flask run`
 
 The back end won't look like much, but when it's running it'll give you a song when you input a statement to the front end. 
 
