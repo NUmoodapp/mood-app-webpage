@@ -27,11 +27,12 @@ def scrape_list_data(song_list, bearer):
                                 headers={"Content-Type":"application/json",
                                             "Authorization":"Bearer {}".format(bearer)}).json()
         if "tracks" not in response or response["tracks"]["items"] == []:#"error" in response:
-            print("Song not found in scrape_list_data, song skipped: ",song)
+            #print("Song not found in scrape_list_data, song skipped: ",song)
             continue
         response = response["tracks"]["items"][0]
         song_id_list.append(response["id"])
         artists_id_list.append(response["artists"][0]["id"])
+        print("Adding "+ song + " to search")
     return song_id_list, artists_id_list
 
 
@@ -106,6 +107,14 @@ def get_match(track_features, emotions, bearer):
         energy_dist[track] = abs(track_features[track]['energy'] - energy)
         valence_dist[track] = abs(track_features[track]['valence'] - valence)
         total_dist[track] = valence_dist[track] + 2*energy_dist[track] + 2*danceability_dist[track]
+
+        match_id = track
+        query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
+        response = requests.get(query,
+                                headers={"Content-Type":"application/json",
+                                            "Authorization":"Bearer {}".format(bearer)}).json()
+        match_name = response["name"]
+        return match_id, match_name
     
     match_id = min(total_dist, key=total_dist.get)
     query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
@@ -172,7 +181,6 @@ def scrape_playlist_data(playlist_id, bearer):
                 track_data.append(item["track"]["id"])
                 artist_data.append(item["track"]["artists"][0]["id"])
         return track_data, artist_data
-
 
 
 """ From a list of playlist ids, data from each, return lists [tracks], [artists] """
