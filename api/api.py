@@ -26,18 +26,23 @@ def get_song():
     # Searches spotify for the statement input, if no song is found it defaults to tell them to try again, will do a better error handling later
     emotion = max(analysisResults['emotion']['document']['emotion'],key=analysisResults['emotion']['document']['emotion'].get)
 
-    print(all_categories(spotify_token))
-
-    # Steps to get track features from genius results:
-    songs = parse_songs(connect_genius(statement))
-    tracks,artists = scrape_list_data(songs, spotify_token)
+    song_conf = connect_genius(statement) #-> returns [[song by artist, confidence],...]
+    songs = parse_songs(song_conf) #-> returns [[song, artist, confidence]]
+    tracks, artists, confidences = scrape_list_data(songs, spotify_token)
     features = get_track_features(tracks, spotify_token)
-    best_song_id, best_song_name = get_match(features, analysisResults['emotion']['document']['emotion'], spotify_token)
+    best_song_id, best_song_name = get_match(features, confidences, analysisResults['emotion']['document']['emotion'], spotify_token)
 
     link = "https://open.spotify.com/embed/track/{track_id}?utm_source=generator".format(track_id=best_song_id)
     return {'song': [best_song_name, link]}
 
 
+def parse_songs(data):
+    song_list = []
+    for song_data in data:
+        split_song = song_data[0].split(' by ')
+        split_song.append(song_data[1])
+        song_list.append(split_song)
+    return song_list
 
 # genius
 
@@ -60,13 +65,6 @@ def get_song_list(json_data, cutoff = False): #input = output of search()
     if cutoff: return song_list[0:3]
     return song_list
 
-
-def parse_songs(data):
-    song_list = []
-    for song in data:
-        split_song = song.split(' by ')
-        song_list.append(split_song)
-    return song_list
 
 # Use: get_song_list(search_genius("[search term]"))
 
@@ -108,38 +106,47 @@ def connect_genius(search_term): #rename
     song_list = []
     res = SentimentAnalysis(search_term)
     search_keywords = res['keywords']
+    search_keywords_confidence_list = []
+    
     search_keywords_list = []
     for s in search_keywords:
         search_keywords_list.append(s['text'])
+        search_keywords_confidence_list.append(s['relevance'])
     # print(search_keywords_list)
+    # print(search_keywords_confidence_list)
 
 
-    combos = []
-    for r in range(len(search_keywords_list)+1):
-        combinations_obj = itertools.combinations(search_keywords_list, r)
-        combos.append(list(combinations_obj))
+    # combos = []
+    # for r in range(len(search_keywords_list)+1):
+    #     combinations_obj = itertools.combinations(search_keywords_list, r)
+    #     combos.append(list(combinations_obj))
 
 
-    combos = strip_combos(combos)
+    # combos = strip_combos(combos)
     
-    if len(combos) > 6:
-        cutoff = False #change if necessary?
-        combos = combos[0:6]
-    else:
-        cutoff = False
+    # if len(combos) > 6:
+    #     cutoff = False #change if necessary?
+    #     combos = combos[0:6]
+    # else:
+    #     cutoff = False
 
     
 
 
-    for word_combo in combos:
-        if word_combo.lower() not in stop_words: 
-            x = get_song_list(search_genius(word_combo), cutoff)
+
+    for word in search_keywords_list:
+        print(word)
+        wc = 0 #counter to pair with relevance
+        if word.lower() not in stop_words: 
+            x = get_song_list(search_genius(word))
             # print(x)
             for song in range(len(x)):
                 x[song] = x[song].replace('\xa0', " ")
+                x[song] = [x[song], search_keywords_confidence_list[wc]]
 
             song_list.append(x)
             #make sure song list isn't too long
+            wc += 1
     return flatten_list(song_list)
 
 
@@ -151,4 +158,5 @@ def connect_genius(search_term): #rename
 #search for best song from the list?
 
 # print(connect_genius("i like legos and airplanes and also I like food and videos"))
+
 

@@ -3,72 +3,25 @@ import random
 import json
 
 
-""" Query all genres seed data defined by Spotify """
-def all_genres(bearer):
-    query = "https://api.spotify.com/v1/recommendations/available-genre-seeds"
-    response = requests.get(query,
-                            headers={"Content-Type":"application/json",
-                                    "Authorization":"Bearer {}".format(bearer)}).json()
-    if "error" in response:
-        print("Error in all_genres: {code}".format(code=response["error"]["status"]))
-        return []
-    else:
-        available_genre_seeds = response["genres"]
-        return available_genre_seeds
-
-
 """ From a list of songs, return the Spotify ID data """
 def scrape_list_data(song_list, bearer):
     song_id_list = []
     artists_id_list = []
-    for song, artist in song_list:
+    song_confidence_dict = {}
+    for song, artist, confidence in song_list:
         query = "https://api.spotify.com/v1/search?q=track:{track_name}%20artist:{artist_name}&type=track&limit=1".format(track_name=song,artist_name=artist)
         response = requests.get(query,
                                 headers={"Content-Type":"application/json",
                                             "Authorization":"Bearer {}".format(bearer)}).json()
-        if "tracks" not in response or response["tracks"]["items"] == []:#"error" in response:
-            #print("Song not found in scrape_list_data, song skipped: ",song)
+        if "tracks" not in response or response["tracks"]["items"] == []:
+            print("Song not found in scrape_list_data, song skipped: ",song," by ",artist)
             continue
         response = response["tracks"]["items"][0]
         song_id_list.append(response["id"])
         artists_id_list.append(response["artists"][0]["id"])
-        print("Adding "+ song + " to search")
-    return song_id_list, artists_id_list
-
-
-""" Get a list of recommendations 
-        Currently takes the first two tracks, first two artists, first genre as seed data (limit is 5)
-        Randomly selects one song from the return list 
-        Does not yet incorporate emotions
-            - Need to map emotions to target values for recommendation parameters (valence, danceability, etc)
-            - Also work out a better scheme for selecting seed values
-"""
-def get_recommendations(seed_tracks, seed_artists, target_emotions, bearer):
-    seed_genres = all_genres(bearer)
-    if len(seed_tracks) > 2:
-        tracks = '%2C'.join(seed_tracks[:2])
-    else:
-        tracks = '%2C'.join(seed_tracks)
-    
-    if len(seed_artists) > 2:
-        artists = '%2C'.join(seed_artists[:2])
-    else:
-        artists = '%2C'.join(seed_artists)
-
-    if len(seed_genres) > 1:
-        genres = '%2C'.join(seed_genres[:1])
-    else:
-        genres = '%2C'.join(seed_genres)
-    query = "https://api.spotify.com/v1/recommendations?seed_artists={artists}&seed_genres={genres}&seed_tracks={tracks}".format(artists=artists,genres=genres,tracks=tracks)
-    response = requests.get(query,
-                            headers={"Content-Type":"application/json",
-                                        "Authorization":"Bearer {}".format(bearer)}).json()
-    if "error" not in response:
-        recs = response["tracks"]
-        for index, data in enumerate(recs):
-            recs[index] = [data["id"],data["name"]]
-        single_rec = random.choice(recs)
-        return single_rec[0],single_rec[1]
+        song_confidence_dict[response["id"]] = confidence
+        print("Adding ", song , " by ",artist," to list data")
+    return song_id_list, artists_id_list, song_confidence_dict
 
 
 
@@ -85,37 +38,26 @@ def get_track_features(tracks, bearer):
 
 
 """ Get best match from dictionary of track features to parameter values supplied.
-        - Decide which parameters to pass into the function / make helper function in this file
-        - Come up with a matching scheme, ie do we:
-            - weight different parameters higher that others?
-            - do we sum the differences for each value and choose the song with the smallest overall sum?
-            - do we use some algorithmic matching software or just build our own scheme?
-            - etc.
+        - Basic shortest distance to ideal feature values for each track
+        - Danceability is mapped directly to joy
+        - Energy is mapped to the average of all the emotions -> Which will always be 0.5?
+        - Valence is mapped to the scale of joy to sadness
+        - Valence has a weight of 2, energy and danceability have weight of 1
+        - All tracks are weighted by their confidence value passed from Genius
+        - The track with the minimum overall distance is returned as the best match
 """
-def get_match(track_features, emotions, bearer):
-    danceability_dist = {}
-    energy_dist = {}
-    valence_dist = {}
+def get_match(track_features, track_confidences, emotions, bearer):
     total_dist = {}
-    emotion = max(emotions,key=emotions.get)
     energy = sum(emotions.values())/len(emotions.keys())
     valence = abs(emotions['joy'] + emotions['sadness'])/2
 
     # Get Distance for all three values
     for track in track_features.keys():
-        danceability_dist[track] = abs(track_features[track]['danceability'] - emotions['joy'])
-        energy_dist[track] = abs(track_features[track]['energy'] - energy)
-        valence_dist[track] = abs(track_features[track]['valence'] - valence)
-        total_dist[track] = valence_dist[track] + 2*energy_dist[track] + 2*danceability_dist[track]
+        danceability_dist = abs(track_features[track]['danceability'] - emotions['joy'])
+        energy_dist = abs(track_features[track]['energy'] - energy)
+        valence_dist = abs(track_features[track]['valence'] - valence)
+        total_dist[track] = (1-track_confidences[track])*(valence_dist + 2*energy_dist + 2*danceability_dist)
 
-        match_id = track
-        query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
-        response = requests.get(query,
-                                headers={"Content-Type":"application/json",
-                                            "Authorization":"Bearer {}".format(bearer)}).json()
-        match_name = response["name"]
-        return match_id, match_name
-    
     match_id = min(total_dist, key=total_dist.get)
     query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
     response = requests.get(query,
@@ -125,6 +67,12 @@ def get_match(track_features, emotions, bearer):
     print("total_dist mapping: ",json.dumps(total_dist,indent=4))
     print("best match (min dist): ",match_id,":",match_name)
     return match_id, match_name
+
+
+
+
+
+# Functions to use in the event of no topic, can query songs from Spotify-made playlists.
 
 
 """ Query all category ids defined by spotify """
