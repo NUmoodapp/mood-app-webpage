@@ -118,11 +118,11 @@ def connect_genius(search_term): #rename
     search_keywords_list = []
     for s in search_keywords:
         search_keywords_list.append(s['text'])
-        search_keywords_confidence_list.append(s['relevance'])
+        search_keywords_confidence_list.append([s['text'], s['relevance']])
     # print(search_keywords_list)
     # print(search_keywords_confidence_list)
 
-    print(search_keywords_list)
+    # print(search_keywords_list)
     '''
     tokenizer = nltk.RegexpTokenizer(r"\w+")
     new_words = tokenizer.tokenize(search_term)
@@ -166,20 +166,43 @@ def connect_genius(search_term): #rename
             #make sure song list isn't too long
     return flatten_list(song_list)
     '''
+    combos = []
+    for r in range(len(search_keywords_list)+1):
+        combinations_obj = itertools.combinations(search_keywords_list, len(search_keywords_list)+1 - r)
+        combos.append(list(combinations_obj))
 
-    for word in search_keywords_list:
-        print(word)
-        wc = 0 #counter to pair with relevance
-        if word.lower() not in stop_words: 
-            x = get_song_list(search_genius(word))
+    combos = strip_combos(combos)
+    # print(combos)
+    # print(search_keywords_confidence_list)
+    
+
+    #pair relevances
+    for c in range(len(combos)):
+        rlvnce = 0
+        offset = 0
+        for sw in search_keywords_confidence_list:
+            if sw[0] in combos[c]:
+                rlvnce += sw[1]
+                offset += 1
+        combos[c] = [combos[c], rlvnce/offset]
+    # print(combos)
+
+
+    for combo in combos:
+        # print(word)
+        # wc = 0 #counter to pair with relevance
+        if combo[0].lower() not in stop_words: 
+            x = get_song_list(search_genius(combo[0]))
             # print(x)
             for song in range(len(x)):
                 x[song] = x[song].replace('\xa0', " ")
-                x[song] = [x[song], search_keywords_confidence_list[wc]]
+                x[song] = [x[song], combo[1]]
 
             song_list.append(x)
-            #make sure song list isn't too long
-            wc += 1
+            if len(flatten_list(song_list)) > 20:
+                return flatten_list(song_list)
+            
+            # wc += 1
     return flatten_list(song_list)
 
 
@@ -190,6 +213,6 @@ def connect_genius(search_term): #rename
 #connect song list return from connect_genius to get_song function somehow.
 #search for best song from the list?
 
-# print(connect_genius("i like legos and airplanes and also I like food and videos"))
+print(len(connect_genius("i like legos and airplanes and also I like food and videos")))
 
 
