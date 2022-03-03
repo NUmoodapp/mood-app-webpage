@@ -41,3 +41,19 @@ def SentimentAnalysis(statement):
 # exampleText = "Who lives in a pineapple under the sea? SpongeBob SquarePants! Absorbent and yellow and porous is he SpongeBob SquarePants! If nautical nonsense be something you wish SpongeBob SquarePants! Then drop on the deck and flop like a fish! SpongeBob SquarePants!"
 # example = SentimentAnalysis(exampleText)
 #print(example)
+
+#Takes sentiment analysis response as input
+# Returns a list of tuples where each tuple in the list is ("Concept", relevance)
+def MakeConceptTuples(response):
+    conceptList = []
+    for concept in response['concepts']:
+        conceptList.append((concept['text'], concept['relevance']))
+    return conceptList
+
+#Takes sentiment analysis response as input
+# Returns a list of tuples where each tuple in the list is ("Keyword", relevance)
+def MakeKeywordTuples(response):
+    keywordList = []
+    for keyword in response['keywords']:
+        keywordList.append((keyword['text'], keyword['relevance']))
+    return keywordList
