@@ -37,27 +37,51 @@ def get_track_features(tracks, bearer):
     return features
 
 
-""" Get best match from dictionary of track features to parameter values supplied.
-        - Basic shortest distance to ideal feature values for each track
-        - Danceability is mapped directly to joy
-        - Energy is mapped to the average of all the emotions -> Which will always be 0.5?
-        - Valence is mapped to the scale of joy to sadness
-        - Valence has a weight of 2, energy and danceability have weight of 1
-        - All tracks are weighted by their confidence value passed from Genius
-        - The track with the minimum overall distance is returned as the best match
 """
+Based on research from https://sites.tufts.edu/eeseniordesignhandbook/2015/music-mood-classification/
+Faster tempo -> high energy
+slower tempo -> lower energy, sad songs
+loudness/intensity -> anger
+softer -> suggests tenderness, sadness, or fear
+high pitch -> happy, carefree, light moods
+lower pitch -> dark, sad, serious mood
+
+valence -> 0:1; positiveness, high = happy, low = negative (sad, depressed, angry)
+tempo -> BPM, need to normalize; high = energetic, low = sad
+speechiness -> above 0.66 is likely all spoken, throw these out
+loudness -> -60:0db, need to normalize; high = anger, low = sadness or fear
+key -> maps to pitch, -1 = none detected, 0:11; high = happy, low = sad
+"""
+
 def get_match(track_features, track_confidences, emotions, bearer):
     total_dist = {}
-    energy = sum(emotions.values())/len(emotions.keys())
-    valence = abs(emotions['joy'] + emotions['sadness'])/2
-
-    # Get Distance for all three values
     for track in track_features.keys():
-        danceability_dist = abs(track_features[track]['danceability'] - emotions['joy'])
-        energy_dist = abs(track_features[track]['energy'] - energy)
-        valence_dist = abs(track_features[track]['valence'] - valence)
-        total_dist[track] = (1-track_confidences[track])*(valence_dist + 2*energy_dist + 2*danceability_dist)
+        # If track is spoken, skip it  entirely
+        if track_features[track]['speechiness'] > 0.66: continue
 
+        # Normalize loudness, key, tempo (to out of 120 BPM)
+        loudness = (track_features[track]['loudness']/60)
+        key = track_features[track]['key']/11 if track_features[track]['key'] != -1 else 5/11
+        tempo = track_features[track]['tempo']/120
+        # Pull valence for time complexity (negligible prob but it looks nicer)
+        valence = track_features[track]['valence']
+
+        # Sadness ideals: valence 0, tempo 0, loudness 0, key 0
+        sadness_dist = abs(valence - 0) + abs(tempo - 0) + abs(loudness - 0) + abs(key - 0)
+        # Joy ideals: valence 1, tempo 1, key 1
+        joy_dist = abs(valence - 1) + abs(tempo - 1) + abs(key - 1)
+        # Fear ideals: loudness 0
+        fear_dist = abs(loudness - 0)
+        # Anger ideals: valence 0, tempo 1, loudness 1
+        anger_dist = abs(valence - 0) + abs(tempo - 1) + abs(loudness - 1)
+
+        # Sum of all, weighted by confidence (1 - confidence since want the minimum dist)
+        total_dist[track] = (1 - track_confidences[track]) * (sadness_dist + joy_dist + fear_dist + anger_dist)
+
+    if len(total_dist.keys()) == 0:
+        print("No songs found.")
+        return None, None
+        
     match_id = min(total_dist, key=total_dist.get)
     query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
     response = requests.get(query,
@@ -67,6 +91,40 @@ def get_match(track_features, track_confidences, emotions, bearer):
     print("total_dist mapping: ",json.dumps(total_dist,indent=4))
     print("best match (min dist): ",match_id,":",match_name)
     return match_id, match_name
+
+
+# Old match function; can be deleted if new function is preferred
+""" Get best match from dictionary of track features to parameter values supplied.
+        - Basic shortest distance to ideal feature values for each track
+        - Danceability is mapped directly to joy
+        - Energy is mapped to the average of all the emotions -> Which will always be 0.5?
+        - Valence is mapped to the scale of joy to sadness
+        - Valence has a weight of 2, energy and danceability have weight of 1
+        - All tracks are weighted by their confidence value passed from Genius
+        - The track with the minimum overall distance is returned as the best match
+"""
+# def get_match(track_features, track_confidences, emotions, bearer):
+#     total_dist = {}
+#     energy = sum(emotions.values())/len(emotions.keys())
+#     valence = abs(emotions['joy'] + emotions['sadness'])/2
+#     valence = emotions['joy']
+
+#     # Get Distance for all three values
+#     for track in track_features.keys():
+#         danceability_dist = abs(track_features[track]['danceability'] - emotions['joy'])
+#         energy_dist = abs(track_features[track]['energy'] - energy)
+#         valence_dist = abs(track_features[track]['valence'] - valence)
+#         total_dist[track] = (1-track_confidences[track])*(valence_dist + 2*energy_dist + 2*danceability_dist)
+
+#     match_id = min(total_dist, key=total_dist.get)
+#     query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
+#     response = requests.get(query,
+#                             headers={"Content-Type":"application/json",
+#                                         "Authorization":"Bearer {}".format(bearer)}).json()
+#     match_name = response["name"]
+#     print("total_dist mapping: ",json.dumps(total_dist,indent=4))
+#     print("best match (min dist): ",match_id,":",match_name)
+#     return match_id, match_name
 
 
 

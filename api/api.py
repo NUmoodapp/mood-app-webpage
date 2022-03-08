@@ -35,7 +35,8 @@ def get_song():
     tracks, artists, confidences = scrape_list_data(songs, spotify_token)
     features = get_track_features(tracks, spotify_token)
     best_song_id, best_song_name = get_match(features, confidences, analysisResults['emotion']['document']['emotion'], spotify_token)
-
+    if best_song_id is None:
+        return {'song': [None, None]}
     link = "https://open.spotify.com/embed/track/{track_id}?utm_source=generator".format(track_id=best_song_id)
     return {'song': [best_song_name, link]}
 
