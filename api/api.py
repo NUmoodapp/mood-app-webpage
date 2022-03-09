@@ -1,6 +1,6 @@
 from sqlite3 import connect
 import time
-from flask import Flask, request
+from flask import Flask, request, Response
 from IBMWatson import SentimentAnalysis
 import json
 import urllib.request
