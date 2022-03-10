@@ -13,6 +13,7 @@ let h3font = 1.17;
 let fontcolor = 'black';
 
 function App(props) {
+    
     const [statement, setStatement] = useState('');
     const [token, setToken] = useState(null);
     const [toggleHome, setToggleHome] = useState(true);
@@ -20,6 +21,7 @@ function App(props) {
     const [toggleChat, setToggleChat] = useState(false);
     const [song, setSong] = useState(null);
     const [speaking, setSpeaking] = useState(false);
+    const [doneSearching, setDoneSearching] = useState(false);
     
 
 
@@ -151,6 +153,7 @@ function App(props) {
             .then(res => res.json())
             .then(data => {
                 setSong(data.song);
+                setDoneSearching(true);
                 console.log('Success:', data);
             })
             .catch(error => {
@@ -186,6 +189,8 @@ function App(props) {
 
     function goChat(e) {
         setToggleChat(true);
+        setDoneSearching(false);
+
 
         getSpotifyTokenOrRefresh()
             .then((response) => {
@@ -194,6 +199,12 @@ function App(props) {
             .catch(error => {
                 console.log("error: no spotify token found: ",error);
             });
+    }
+
+    function restartChat(e) {
+        goHome(e);
+        goChat();
+        console.log('Resetting...', song, statement);
     }
 
 
@@ -237,7 +248,7 @@ function App(props) {
                 <br />      
             </div>}
 
-            {statement !== '' && song == null && <div class="chat no-input">
+            {statement !== '' && song == null && !doneSearching && <div class="chat no-input">
                 <p style={{fontSize: pfont +"em"}} id = "Instructions_err" class = "instructions">Hi, what's up!</p>
                 <p style={{fontSize: pfont +"em"}} id = "Statement_err" class = "statement">{statement}</p>
                 <p style={{fontSize: pfont +"em"}} id = "Response_err" class = "response">Finding the perfect song to match your mood...</p>
@@ -248,15 +259,26 @@ function App(props) {
                 // above will show while song is loading
                 // below will show when song is found (we can replace the embed url with the one we find)
             }
-            {statement !== '' && song != null && <div class="chat no-input">
+            {statement !== '' && song != null && song[0] && <div class="chat no-input">
                 <p style={{fontSize: pfont +"em"}} id = "Instructions_Fin" class="instructions">Hi, what's up!</p>
                 <p style={{fontSize: pfont +"em"}} id = "Statement_Fin" class="statement">{statement}</p>
                 <p style={{fontSize: pfont +"em"}} id = "Response_Fin" class="response">Finding the perfect song to match your mood...</p>
                 <p style={{fontSize: pfont +"em"}} id = "Result_Fin" class= "response">Here's the perfect song for you:</p>
                 <div class="response">
-                    <iframe title="Youtube Link" src={song[1]} frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                    <iframe title="Spotify Link" src={song[1]} frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
                 </div>
                 <p class="center"><button onClick={goHome} >Go Back</button></p>
+                <p class="center"><button onClick={restartChat} >Try again</button></p>
+                </div>}
+
+            {//If no song was found, the below will show
+            }
+            {statement !== '' && song != null && !song[0] && doneSearching && <div class="chat no-input">
+                <p style={{fontSize: pfont +"em"}} id = "Instructions_Fin" class="instructions">Hi, what's up!</p>
+                <p style={{fontSize: pfont +"em"}} id = "Statement_Fin" class="statement">{statement}</p>
+                <p style={{fontSize: pfont +"em"}} id = "Response_Fin" class="response">Finding the perfect song to match your mood...</p>
+                <p style={{fontSize: pfont +"em"}} id = "Result_Fin" class= "response">Sorry, I couldn't find a song for you. Give me another chance (and maybe more detail)!</p>
+                <p class="center"><button onClick={restartChat} >Try again</button></p>
                 </div>}
             </main>
 
