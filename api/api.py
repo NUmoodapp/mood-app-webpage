@@ -113,16 +113,20 @@ def connect_genius(search_term): #rename
     res = SentimentAnalysis(search_term)
     search_keywords = res['keywords']
 
-    # print("Got keywords: ")
-    # print(search_keywords)
+    #print("Got keywords: ")
+    #print(search_keywords)
     search_keywords_confidence_list = []
     
     #build list of search keywords from sentiment analysis
     search_keywords_list = []
     for s in search_keywords:
-        search_keywords_list.append(s['text'])
-        search_keywords_confidence_list.append([s['text'], s['relevance']])
+        words = s['text'].split(' ')
+        search_keywords_list.extend(words)
+        for word in words: 
+            search_keywords_confidence_list.append([word, s['relevance']])
 
+    print('keywords: ')
+    print(search_keywords_list)
    
     #build list of all combinations of search keywords
     combos = []

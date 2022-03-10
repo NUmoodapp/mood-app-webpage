@@ -14,7 +14,7 @@ def scrape_list_data(song_list, bearer):
                                 headers={"Content-Type":"application/json",
                                             "Authorization":"Bearer {}".format(bearer)}).json()
         if "tracks" not in response or response["tracks"]["items"] == []:
-            print("Song not found in scrape_list_data, song skipped: ",song," by ",artist)
+            # print("Song not found in scrape_list_data, song skipped: ",song," by ",artist)
             continue
         response = response["tracks"]["items"][0]
         song_id_list.append(response["id"])
