@@ -38,19 +38,8 @@ def get_track_features(tracks, bearer):
 
 
 """
+https://www.sfu.ca/~ljilja/cnl/guests/Music.pdf
 Based on research from https://sites.tufts.edu/eeseniordesignhandbook/2015/music-mood-classification/
-Faster tempo -> high energy
-slower tempo -> lower energy, sad songs
-loudness/intensity -> anger
-softer -> suggests tenderness, sadness, or fear
-high pitch -> happy, carefree, light moods
-lower pitch -> dark, sad, serious mood
-
-valence -> 0:1; positiveness, high = happy, low = negative (sad, depressed, angry)
-tempo -> BPM, need to normalize; high = energetic, low = sad
-speechiness -> above 0.66 is likely all spoken, throw these out
-loudness -> -60:0db, need to normalize; high = anger, low = sadness or fear
-key -> maps to pitch, -1 = none detected, 0:11; high = happy, low = sad
 """
 
 def get_match(track_features, track_confidences, emotions, bearer):
@@ -64,28 +53,23 @@ def get_match(track_features, track_confidences, emotions, bearer):
         # If track is spoken, skip it  entirely
         if track_features[track]['speechiness'] > 0.66: continue
 
-        # Normalize loudness, key, tempo (to out of 120 BPM)
-        loudness = abs((track_features[track]['loudness']/60))
-        key = track_features[track]['key']/11 if track_features[track]['key'] != -1 else 5/11
+        # Normalize tempo (to out of 180 BPM)
+        energy = track_features[track]['energy']
         tempo = track_features[track]['tempo']/180
-        # Pull valence for time complexity (negligible prob but it looks nicer)
         valence = track_features[track]['valence']
 
-        # Sadness ideals: valence 0, tempo 0, loudness 0, key 0
-        sadness[track] = (abs(valence - 0) + abs(tempo - 0) + abs(loudness - 0)  + track_features[track]['danceability'])/4
-        # Joy ideals: valence 1, tempo 1, key 1
-        joy[track]= (abs(valence - 1) + abs(tempo - 1) + abs(key - 1) + abs(track_features[track]['danceability'] - 1))/4
-        # Fear ideals: loudness 0
-        fear[track] = abs(loudness - 0)
-        # Anger ideals: valence 0, tempo 1, loudness 1
-        anger[track]= (valence + (1 - track_features[track]['energy']) + (1 - tempo) + (1 - loudness))/4
+        sadness[track] = (valence + energy)/2
+        joy[track] = (abs(1-valence))# + abs(track_features[track]['energy']  - 0.5))/2
+        fear[track] = (abs(0.25-valence) + abs(0.25-energy))/2
+        anger[track] = (abs(valence) + abs(1-energy) + (1-tempo))/4
 
         # Sum of all, weighted by confidence (1 - confidence since want the minimum dist)
-        # Max emotion distance is weighted double, (everything else scaled by 2)
-        total_dist[track] = (1 - track_confidences[track]) * (abs(emotions['sadness'] - sadness[track]) + 
-                                                                abs(emotions['joy'] - joy[track]) + 
-                                                                abs(emotions['fear'] - fear[track]) + 
-                                                                abs(emotions['anger'] - anger[track]))
+        sorted_emotions = sorted(emotions,key=emotions.get)
+        total_dist[track] = (1 - track_confidences[track]) * (((sorted_emotions.index('sadness')+1) * abs(emotions['sadness'] - sadness[track])) +
+                                                            ((sorted_emotions.index('joy')+1) * abs(emotions['joy'] - joy[track])) +
+                                                            ((sorted_emotions.index('fear')+1) * abs(emotions['fear'] - fear[track])) +
+                                                            ((sorted_emotions.index('anger')+1) * abs(emotions['anger'] - anger[track]))) 
+
 
     if len(total_dist.keys()) == 0:
         print("No songs found.")
@@ -93,13 +77,31 @@ def get_match(track_features, track_confidences, emotions, bearer):
 
     max_emotion = max(emotions, key=emotions.get)
     if(emotions[max_emotion]>0.8):
-        if(max_emotion == 'anger'): match_id = min(anger, key=anger.get)
-        elif(max_emotion == 'joy'): match_id = min(joy, key=joy.get)
-        elif(max_emotion == 'sadness'): match_id = min(sadness, key=sadness.get)
-        elif(max_emotion == 'fear'): match_id = min(fear, key=fear.get)
+        if(max_emotion == 'anger'): 
+            match_id = min(anger, key=anger.get)
+            print("anger: ",json.dumps(anger, indent=4))
+            print("features: ",json.dumps(track_features[match_id],indent=4))
+        elif(max_emotion == 'joy'):  
+            match_id = min(joy, key=joy.get)
+            print("joy: ",json.dumps(joy, indent=4))
+            print("features: ",json.dumps(track_features[match_id],indent=4))
+        elif(max_emotion == 'sadness'): 
+            match_id = min(sadness, key=sadness.get)
+            print("sad: ",json.dumps(sadness, indent=4))
+            print("features: ",json.dumps(track_features[match_id],indent=4))
+        elif(max_emotion == 'fear'): 
+            match_id = min(fear, key=fear.get)
+            print("fear: ",json.dumps(fear, indent=4))
+            print("features: ",json.dumps(track_features[match_id],indent=4))
         else: match_id = min(total_dist, key=total_dist.get)
     else:
         match_id = min(total_dist, key=total_dist.get)
+        print("features: ",json.dumps(track_features[match_id],indent=4))
+        print("anger: ",json.dumps(anger, indent=4))
+        print("fear: ",json.dumps(fear, indent=4))
+        print("joy: ",json.dumps(joy, indent=4))
+        print("sad: ",json.dumps(sadness, indent=4))
+        print("total: ",json.dumps(total_dist, indent=4))
         
     query = "https://api.spotify.com/v1/tracks/{id}".format(id=match_id)
     response = requests.get(query,
