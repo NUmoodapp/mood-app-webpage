@@ -109,88 +109,58 @@ stop_words = ['the', 'and', 'a', 'an']
 
 def connect_genius(search_term): #rename
     song_list = []
+    #get sentiment analysis results
     res = SentimentAnalysis(search_term)
     search_keywords = res['keywords']
 
-    print("Got keywords: ")
-    print(search_keywords)
+    # print("Got keywords: ")
+    # print(search_keywords)
     search_keywords_confidence_list = []
     
+    #build list of search keywords from sentiment analysis
     search_keywords_list = []
     for s in search_keywords:
         search_keywords_list.append(s['text'])
-        search_keywords_confidence_list.append(s['relevance'])
-    # print(search_keywords_list)
-    # print(search_keywords_confidence_list)
+        search_keywords_confidence_list.append([s['text'], s['relevance']])
 
-    print(search_keywords_list)
-    '''
-    tokenizer = nltk.RegexpTokenizer(r"\w+")
-    new_words = tokenizer.tokenize(search_term)
-    # remove duplicates and stopwords
-    tokens_without_sw = [word for word in new_words if not word in stopwords.words() and not word in search_keywords_list]
-    print(tokens_without_sw)
-    # search_keywords_list.extend(tokens_without_sw)
-
+   
+    #build list of all combinations of search keywords
     combos = []
     for r in range(len(search_keywords_list)+1):
         combinations_obj = itertools.combinations(search_keywords_list, len(search_keywords_list)+1 - r)
         combos.append(list(combinations_obj))
 
     combos = strip_combos(combos)
+ 
     
-    if len(combos) > 6:
-        cutoff = False #change if necessary?
-        combos = combos[0:6]
-    else:
-        cutoff = False
-        combos2 = []
-        for i in range(len(search_keywords_list)):
-            for r2 in range(len(tokens_without_sw)):
-                combos2.append(tokens_without_sw[r2] + " " + search_keywords_list[i])
-                pass
-        print(combos2)
-        combos += combos2
-        if len(combos) > 6:
-            combos = combos[0:6]
-    
-    print(combos)
-    
-    for word_combo in combos:
-        if word_combo.lower() not in stop_words: 
-            x = get_song_list(search_genius(word_combo), cutoff)
-            # print(x)
+
+    #pair relevances
+    for c in range(len(combos)):
+        rlvnce = 0
+        offset = 0
+        for sw in search_keywords_confidence_list:
+            if sw[0] in combos[c]:
+                rlvnce += sw[1]
+                offset += 1
+        combos[c] = [combos[c], rlvnce/offset]
+
+
+
+    for combo in combos:
+        if combo[0].lower() not in stop_words: 
+            x = get_song_list(search_genius(combo[0]))
             for song in range(len(x)):
                 x[song] = x[song].replace('\xa0', " ")
+                x[song] = [x[song], combo[1]]
 
             song_list.append(x)
-            #make sure song list isn't too long
-    return flatten_list(song_list)
-    '''
-
-    for word in search_keywords_list:
-        print(word)
-        wc = 0 #counter to pair with relevance
-        if word.lower() not in stop_words: 
-            x = get_song_list(search_genius(word))
-            # print(x)
-            for song in range(len(x)):
-                x[song] = x[song].replace('\xa0', " ")
-                x[song] = [x[song], search_keywords_confidence_list[wc]]
-
-            song_list.append(x)
-            #make sure song list isn't too long
-            wc += 1
+            if len(flatten_list(song_list)) > 20:
+                return flatten_list(song_list)
+            
+          
     return flatten_list(song_list)
 
 
 
-# to do
-# ------
-
-#connect song list return from connect_genius to get_song function somehow.
-#search for best song from the list?
-
-# print(connect_genius("i like legos and airplanes and also I like food and videos"))
 
 
